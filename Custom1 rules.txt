@@ -1,0 +1,127 @@
+<group name="firewall,">   
+   <rule id="710004" level="5" frequency="5" timeframe="600">
+        <if_matched_sid>1002</if_matched_sid>
+        <field name="attack_info">network configuration problem</field>
+        <field name="streaming_engine">network configuration</field>
+        <description>Detected Multiple anomalies coming from external sources. Check your network configuration.</description>
+   </rule>
+
+   <rule id="900107" level="8">
+      <if_sid>18141</if_sid>
+      <description>OS-MS-Windows Unexpected Shutdown.</description>
+      <options>no_full_log</options>
+   </rule>
+
+   <rule id="140014" level="5">
+        <if_sid>60117</if_sid>
+        <time>8 pm - 8 am</time>
+        <description>OS-MX-Windows Audit Log Cleared</description>
+   </rule>
+
+   <rule id="18118" level="9">
+    <if_sid>18104</if_sid>
+    <id>^517$|^1102$</id>
+    <description>Windows audit log was cleared.</description>
+    <mitre>
+      <id>T1070.001</id>
+    </mitre>
+    <group>logs_cleared,pci_dss_10.6.1,gpg13_10.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.6,tsc_CC7.2,tsc_CC7.3,</group>
+   </rule>
+
+   <rule id="140007" level="5">
+        <if_sid>100035</if_sid>
+        <field name="attack_info">Brute Force Attempts</field>
+        <description>Brute Force Attempts on Web.</description>
+   </rule>
+
+   <rule id="140008" level="5" frequency="5" timeframe="300">
+        <if_matched_sid>100035</if_matched_sid>
+        <field name="attack_info">Brute Force Attempts</field>
+        <field name="dst">\.+</field>
+        <description>Brute Force Attempts on Web.</description>
+   </rule>
+
+   <rule id="710001" level="5">
+        <if_sid>2501</if_sid>
+        <field name="log_component">Firewall Authentication</field>
+        <field name="log_subtype">Authentication</field>
+        <match>Failed</match>
+        <description>Failed Login to Firewall(Network Device).</description>
+   </rule>
+   
+   <rule id="710002" level="5" frequency="5" timeframe="300">
+        <if_matched_sid>710001</if_matched_sid>
+        <description>Multiple Failed Login to Firewall(Network Device).</description>
+   </rule>
+
+   <rule id="701104" level="8" frequency="10" timeframe="300">
+    <if_matched_sid>2501, 5716</if_matched_sid>
+    <description>OS-Unix-Authentication Failed for Multiple Users in Short Duration.</description>
+   </rule>
+
+   <rule id="710003" level="5">
+        <if_matched_sid>200003</if_matched_sid>
+        <description>Excessive SMTP traffic outbound.</description>
+   </rule>
+
+   <rule id="100054" level="7">
+    <decoded_as>json</decoded_as>
+    <field name="product">Anti Virus</field>
+    <description>Checkpoint $(product): $(reason) </description>
+   </rule>
+
+   <rule id="100054" level="7">
+    <decoded_as>json</decoded_as>
+    <field name="product">Anti Virus</field>
+    <description>Checkpoint $(product): $(reason) </description>
+   </rule>
+  
+   <rule id="140011" level="5">
+        <if_sid>100035</if_sid>
+        <field name="attack_info">\.+</field>
+        <description>Suspicious Activity Occured.</description>
+   </rule>
+
+   <rule id="140009" level="5">
+        <if_sid>100035</if_sid>
+        <field name="attack_info">Scanning|Scan</field>
+        <field name="dst">\.+</field>
+        <description>Scanning Events</description>
+   </rule>
+
+   <rule id="140009" level="5">
+        <if_sid>100035</if_sid>
+        <field name="attack_info">Scanning|Scan</field>
+        <field name="dst">\.+</field>
+        <description>Scanning Events</description>
+  </rule>
+   
+  <rule id="140010" level="5" frequency="5" timeframe="300">
+        <if_matched_sid>100035</if_matched_sid>
+        <field name="attack_info">Scanning|Scan</field>
+        <field name="dst">\.+</field>
+        <description>High Number of Scanning Events</description>
+  </rule>
+
+  <rule id="140012" level="5">
+        <decoded_as>json</decoded_as>
+        <field name="ifdir">inbound</field>
+        <field name="attack_info">Scanning|Scan</field>
+        <description>External Inbound Scanning Activity.</description>
+  </rule>
+ 
+  <rule id="140009" level="5">
+        <if_sid>100035</if_sid>
+        <field name="attack_info">Scanning|Scan</field>
+        <field name="dst">\.+</field>
+        <description>Scanning Events</description>
+  </rule>
+   
+  <rule id="140010" level="5" frequency="5" timeframe="300">
+        <if_matched_sid>100035</if_matched_sid>
+        <field name="attack_info">Scanning|Scan</field>
+        <field name="dst">\.+</field>
+        <description>High Number of Scanning Events</description>
+  </rule>
+
+</group>  

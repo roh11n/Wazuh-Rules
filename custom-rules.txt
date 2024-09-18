@@ -1,0 +1,106 @@
+<rule id="300100" level="9" timeframe="300">
+      <if_sid>60117</if_sid>
+      <description>OS-MS-Windows Audit Log Cleared.</description>
+   </rule>
+   
+   <rule id="300101" level="9" timeframe="300">
+      <if_sid>60110</if_sid>
+      <description>OS-MS-Windows User Account Changed.</description>
+   </rule>
+   
+   <rule id="300102" level="8" timeframe="300">
+      <if_sid>60109</if_sid>
+      <time>8 pm - 6 am</time>
+      <description>OS-MS-Windows User Account Enabled or Created.</description>
+   </rule>
+   
+   <rule id="300103" level="8" timeframe="300">
+      <if_sid>60111</if_sid>
+      <description>OS-MS-Windows User Account Disabled or Deleted.</description>
+   </rule>
+   
+   <rule id="300104" level="8" timeframe="300">
+      <if_sid>60634</if_sid>
+      <description>OS-MS-Windows Installed an Application.</description>
+   </rule>
+   
+   
+   <rule id="300105" level="8" timeframe="300">
+      <if_matched_sid>60109</if_matched_sid>
+      <field name="win.system.eventID">4720</field>
+      <description>OS-MS-Windows Local Account Created.</description>
+   </rule>
+   
+   <rule id="300106" level="8" frequency="20" timeframe="300">
+      <if_matched_sid>60624</if_matched_sid> 
+      <description>OS-MS-Windows Multiple Authentication Failures.</description>
+   </rule>
+   
+   <rule id="300107" level="8" timeframe="300">
+      <if_sid>18141</if_sid>
+      <description>OS-MS-Windows Unexpected Shutdown.</description>
+   </rule>
+   
+   <rule id="300108" level="8" timeframe="300">
+      <if_sid>18117</if_sid>
+      <description>OS-MS-Windows Shutdown.</description>
+   </rule>
+   
+   <rule id="300109" level="8" timeframe="600">
+      <if_sid>513</if_sid>
+      <description>OS-MS-Windows Malicious File Found on the System.</description>
+   </rule>
+   
+   <rule id="300110" level="8">
+      <if_sid>60144</if_sid>
+      <description>Windows: Local Security Group Changed(Member Added).</description>
+   </rule>
+
+   <rule id="300111" level="8">
+      <if_sid>60145</if_sid>
+      <description>Windows: Local Security Group Changed(Member Removed).</description>
+   </rule>
+   
+   <rule id="300113" level="8">
+      <field name="win.system.channel">Security</field>
+      <field name="win.system.eventID">4723</field>
+      <description>An attempt was made to change an account's password.</description>
+   </rule>
+   
+   <rule id="300114" level="8" timeframe="300">
+      <field name="win.system.eventID">4648</field>
+      <description>Windows: A logon was attempted using explicit credentials.</description>
+   </rule>
+      
+   <rule id="300115" level="8" frequency="3" timeframe="300">
+      <if_matched_sid>60115</if_matched_sid> 
+      <description>Windows: User Account Lockout.</description>
+   </rule>
+   
+   <rule id="300119" level="8" frequency="5" timeframe="300">
+      <if_matched_sid>60124</if_matched_sid> 
+      <description>OS-MS-Windows: Login Attempts from Disabled Account.</description>
+   </rule>
+   
+   <rule id="300116" level="8" frequency="5" timeframe="300">
+      <if_matched_sid>18104</if_matched_sid>
+      <field name="win.system.eventID">4724</field>
+      <description>Windows: Too Many Password Resets.</description>
+   </rule>
+
+   <rule id="300120" level="8" timeframe="300">
+      <if_sid>18213</if_sid>
+      <description>Windows: A security-disabled universal group was changed.</description>
+   </rule>
+
+   <rule id="300121" level="8" timeframe="300">
+      <if_sid>60106</if_sid>
+      <time>8 pm - 6 am</time>
+      <description>Windows: Windows Logon Success with non-business hour.</description>
+   </rule>
+
+   <rule id="300122" level="5" frequency="5" timeframe="300">
+      <if_matched_sid>61614,61616</if_matched_sid>
+      <options>no_full_log</options>
+      <description>Sysmon - Event 12: RegistryEvent (Object create and delete).</description>
+   </rule>

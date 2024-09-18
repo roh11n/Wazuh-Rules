@@ -1,0 +1,83 @@
+<!-- Redline Infostealer Rules -->
+
+    	<!-- any C2 communication trying to make -->
+    <rule id="101116" level="12">
+        <if_sid>61600</if_sid>
+        <field name="win.eventdata.queryName">org$|t.me|steamcommunity.com|solr.kennstdueinen.de</field>
+        <description>Trying to make C2 communication with $(win.eventdata.queryName)</description>
+    </rule>
+    
+    <!-- detect if vbc.exe is executed or not right after parent file -->
+    
+    <rule id="101117" level="12">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.parentImage" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\Downloads\\\\C4Loader.bin\\\\.+\.exe</field>
+        <field name="win.eventdata.originalFileName">^vbc.exe$</field>
+        <description>$(win.eventdata.originalFileName) is executed possible redline stealer activity.</description>
+    </rule>
+  
+    
+    <!-- PowerShell encoded command -->
+    <rule id="101118" level="12">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.ParentImage" type="pcre2">(?i)vbc.exe</field>
+        <field name="win.eventdata.image" type="pcre2">powershell.exe</field>
+        <field name="win.eventdata.commandLine" type="pcre2">(?i)-EncodedCommand</field>
+        <description>Suspicious encoded PowerShell command detected. Possible RedLine stealer activity.</description>
+    </rule> 
+
+  <!-- Rouge file creation -->
+    <rule id="101119" level="12">
+        <if_group>sysmon_eid11_detections</if_group>
+        <field name="win.eventdata.image" type="pcre2">(?i)powershell\.exe</field>
+        <description>Powershell process created executable: $(win.eventdata.targetFilename) file in AppData folder.</description>
+    </rule> 
+
+  <!-- PowerShell encoded command -->
+    <rule id="101120" level="12">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.image" type="pcre2">powershell.exe</field>
+        <field name="win.eventdata.commandLine" type="pcre2">-ExclusionPath</field>
+        <description>Malicious activity detected. Multiple folders were added to the Windows Defender exclusion list.</description>
+    </rule>
+
+  <!-- Rouge file creation  --> 
+    <rule id="101121" level="12">
+        <if_sid>61613</if_sid>
+        <field name="win.eventdata.targetFilename" type="pcre2">(?i)[c-z]:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts</field>
+        <field name="win.eventdata.image" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\AppData\\\\Local\\\\Temp\\\\.+\.exe</field>
+        <description>Suspicious modification of $(win.eventdata.targetFilename) by $(win.eventdata.image). Possible RedLine stealer activity.</description>
+    </rule>
+
+  <!-- Persistence detection  -->
+    <rule id="101122" level="12">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.image" type="pcre2">schtasks.exe</field>
+        <field name="win.eventdata.parentImage" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\AppData\\\\Local\\\\Temp\\\\.+\.exe</field>
+        <field name="win.eventdata.commandLine" type="pcre2">\.exe</field>
+        <description>Suspicious $(win.eventdata.commandLine) scheduled task was created</description>
+    </rule>     
+    
+    
+    <rule id="101124" level="12">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.image" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\Downloads\\\\.+\.exe</field>
+        <field name="win.eventdata.parentImage" type="pcre2">(?i)[c-z]:\\\\Windows\\\\.+\.exe</field>
+        <description>File has been downloaded from $(win.eventdata.parentImage)</description>
+    </rule>
+    
+    <rule id="101125" level="12">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.parentImage" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\Downloads\\\\.+\.exe</field>
+        <field name="win.eventdata.originalFileName">^vbc.exe$</field>
+        <description>$(win.eventdata.originalFileName) is executed possible redline stealer activity.</description>
+    </rule>
+    
+    <!-- detect if .ps1 is executed or not right after something likeparent file -->
+    
+    <rule id="101128" level="12">
+        <if_sid>61613</if_sid>
+        <field name="win.eventdata.image" type="pcre2">(?i)[c-z]:\\\\Windows\\\\SysWOW64\\\\WindowsPowerShell\\\\.+\\\\.+\.exe</field>
+        <field name="win.eventdata.targetFilename" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\AppData\\\\Local\\\\Temp\\\\.+\.ps1</field>
+        <description>$(win.eventdata.targetFilename) is created, possibility of Malware.</description>
+    </rule>
