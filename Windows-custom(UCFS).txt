@@ -1,0 +1,107 @@
+<group name="Windows,ms,">
+   <rule id="900100" level="9" timeframe="300">
+      <if_sid>18118</if_sid>
+      <description>OS-MS-Windows Audit Log Cleared.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900102" level="8" timeframe="300">
+      <if_sid>18110</if_sid>
+      <description>OS-MS-Windows User Account Created.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900103" level="8" timeframe="300">
+      <if_sid>18112</if_sid>
+      <description>OS-MS-Windows User Account Deleted.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900104" level="8" timeframe="300">
+      <if_sid>60634</if_sid>
+      <description>OS-MS-Windows Installed an Application.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   
+   <rule id="900105" level="8" timeframe="300">
+      <if_sid>18110</if_sid>
+      <id>^4720$</id>
+      <description>OS-MS-Windows Local Account Created.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900106" level="8" frequency="3" timeframe="300">
+      <if_matched_sid>60624</if_matched_sid> 
+      <description>OS-MS-Windows Multiple Authentication Failures.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900107" level="8" timeframe="300">
+      <if_sid>18141</if_sid>
+      <description>OS-MS-Windows Unexpected Shutdown.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900108" level="8" timeframe="300">
+      <if_sid>18117</if_sid>
+      <description>OS-MS-Windows Shutdown.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900109" level="8" timeframe="300">
+      <if_sid>513</if_sid>
+      <description>OS-MS-Windows Malicious File Found on the System.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900110" level="8" timeframe="300">
+      <if_sid>18207</if_sid>
+      <description>Windows: Administrators Group Changed(Member Added).</description>
+      <options>no_full_log</options>
+   </rule>
+
+   <rule id="900111" level="8" timeframe="300">
+      <if_sid>18208</if_sid>
+      <description>Windows: Administrators Group Changed(Member Removed).</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900112" level="8" timeframe="300">
+      <if_sid>5736</if_sid>
+      <description>SSHD: Connection Reset or Aborted</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900113" level="8" timeframe="300">
+      <id>4723</id>
+      <description>An attempt was made to change an account's password.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900114" level="8" timeframe="300">
+      <id>4648</id>
+      <description>Windows: A logon was attempted using explicit credentials.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900117" level="8" frequency="15" timeframe="300">
+      <if_matched_sid>4648</if_matched_sid>
+      <description>OS-MS-Windows: A logon was attempted using explicit credentials.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900115" level="8" frequency="3" timeframe="300">
+      <if_matched_sid>18116</if_matched_sid> 
+      <description>Windows: User Account Lockout.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   <rule id="900116" level="8" timeframe="300">
+      <if_matched_sid>18219</if_matched_sid>
+      <description>Windows: Domain Controller Group Changed.</description>
+      <options>no_full_log</options>
+   </rule>
+   
+   
+</group>

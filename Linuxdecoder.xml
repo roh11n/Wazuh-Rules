@@ -1,0 +1,53 @@
+<decoder name="usermod1">
+    <program_name>usermod</program_name>
+</decoder>
+
+<decoder name="usermodchild">
+    <parent>usermod1</parent>
+    <regex>'(\.*)' to '(\.*)'</regex>
+    <order>olduser,newuser</order>
+</decoder>
+
+
+<!--Jun 29 16:09:44 localhost usermod[15129]: change user name 'niko' to 'niki'-->
+
+<!-- Jun 30 12:12:42 localhost usermod[6113]: lock user 'star' password -->
+
+<decoder name="usermodchild">
+    <parent>usermod1</parent>
+    <regex offset="after_parent">(lock user) '(\.*)' password</regex>
+    <order>event,existuser</order>
+</decoder>
+
+
+<!--Jun 30 14:04:59 VulMachine usermod[124072]: add 'noob' to group 'root' -->
+
+<decoder name="usermodchild">
+    <parent>usermod1</parent>
+    <regex offset="after_parent">(add) '(\.*)' to (group) '(\.*)'</regex>
+    <order>event,existuser,action,groupname</order>
+</decoder>
+
+<!--Jun 30 14:14:31 VulMachine gpasswd[130155]: user noob removed by root from group sudo-->
+
+<decoder name="gpasswd1">
+    <program_name>gpasswd</program_name>
+</decoder>
+
+<decoder name="gpasswdchild">
+    <parent>gpasswd</parent>
+    <regex offset="after_parent">user (\.*) (removed) by (\.*) from (group) (\.*)</regex>
+    <order>existuser,actiontype,sourceuser,action,groupname</order>
+</decoder>
+
+<!-- Jun 30 14:53:47 VulMachine crontab[153841]: (root) REPLACE (root)-->
+
+<decoder name="crontab1">
+    <program_name>crontab</program_name>
+</decoder>
+
+<decoder name="crontabchild">
+    <parent>crontab1</parent>
+    <regex offset="after_parent">(\.*) (\.*) (\.*)</regex>
+    <order>existuser,actiontype,sourceuser</order>
+</decoder>

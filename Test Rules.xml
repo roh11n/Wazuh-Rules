@@ -1,0 +1,1206 @@
+  <rule id="62105" level="14" frequency="$MS_FREQ" timeframe="60">
+    <if_matched_sid>62101</if_matched_sid>
+    <description>Short-time multiple Windows Defender error events</description>
+    <options>no_full_log</options>
+    <group>pci_dss_10.6.1,gpg13_4.12,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.6,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62106" level="14" frequency="$MS_FREQ" timeframe="30">
+    <if_matched_sid>62102</if_matched_sid>
+    <description>Short-time multiple Windows Defender warning events</description>
+    <options>no_full_log</options>
+    <group>pci_dss_10.6.1,gpg13_4.12,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.6,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62113" level="14">
+    <if_sid>62101</if_sid>
+    <field name="win.system.eventID">^1006$</field>
+    <description>Windows Defender: Antimalware engine found $(win.eventdata.severityName) malware or other potentially unwanted software</description>
+    <options>no_full_log</options>
+    <group>gdpr_IV_35.7.d,gdpr_II_5.1.f,pci_dss_10.6.1,pci_dss_11.4,gpg13_10.1,hipaa_164.312.b,nist_800_53_AU.9,nist_800_53_SI.4,tsc_CC7.2,tsc_CC7.3,tsc_CC6.1,tsc_CC6.8,</group>
+  </rule>
+
+  <rule id="62126" level="14">
+    <if_sid>62101</if_sid>
+    <field name="win.system.eventID">^1119$</field>
+    <description>Windows Defender: Antimalware platform encountered a critical error when attempting to perform an action over the  potentially unwanted software</description>
+    <options>no_full_log</options>
+    <group>gdpr_IV_35.7.d,gdpr_II_5.1.f,pci_dss_10.6.1,pci_dss_11.4,gpg13_10.1,hipaa_164.312.b,nist_800_53_AU.9,nist_800_53_SI.4,tsc_CC7.2,tsc_CC7.3,tsc_CC6.1,tsc_CC6.8,</group>
+  </rule>
+
+  <rule id="91803" level="14">
+    <if_sid>91802</if_sid>
+    <field name="win.system.message" type="pcre2">CopyFromScreen</field>
+    <options>no_full_log</options>
+    <description>Screen capture method invoked from PowerShell script.</description>
+    <mitre>
+      <id>T1113</id>
+    </mitre>
+  </rule>
+
+  <rule id="60015" level="12" frequency="4" timeframe="240">
+    <if_matched_sid>60012</if_matched_sid>
+    <options>no_full_log</options>
+    <description>Multiple Windows critical events.</description>
+  </rule>
+
+  <rule id="60154" level="12">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-544}$|^S-1-5-32-544$</field>
+    <options>no_full_log</options>
+    <description>Administrators group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60156" level="12">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-9}$|^S-1-5-9$</field>
+    <options>no_full_log</options>
+    <description>Enterprise domain controllers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60159" level="12">
+    <if_sid>60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-512}$|^S-1-5-21\S+-512$</field>
+    <options>no_full_log</options>
+    <description>Domain admins group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60162" level="12">
+    <if_sid>60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-514}$|^S-1-5-21\S+-514$</field>
+    <options>no_full_log</options>
+    <description>Domain guests group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60164" level="12">
+    <if_sid>60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-516}$|^S-1-5-21\S+-516$</field>
+    <options>no_full_log</options>
+    <description>Domain controllers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60166" level="12">
+    <if_sid>60149,60150,60151,60152,60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-518}$|^S-1-5-21\S+-518$</field>
+    <options>no_full_log</options>
+    <description>Schema admins group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60167" level="12">
+    <if_sid>60149,60150,60151,60152,60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-519}$|^S-1-5-21\S+-519$</field>
+    <options>no_full_log</options>
+    <description>Enterprise admins group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60171" level="12">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-546}$|^S-1-5-32-546$</field>
+    <options>no_full_log</options>
+    <description>Guests group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60176" level="12">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-551}$|^S-1-5-32-551$</field>
+    <options>no_full_log</options>
+    <description>Backup operators group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60187" level="12">
+    <if_sid>60149,60150,60151,60152</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-498}$|^S-1-5-21\S+-498$</field>
+    <options>no_full_log</options>
+    <description>Enterprise read-only domain controllers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60188" level="12">
+    <if_sid>60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-521}$|^S-1-5-21\S+-521$</field>
+    <options>no_full_log</options>
+    <description>Read-only domain controllers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60189" level="12">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-569}$|^S-1-5-32-569$</field>
+    <options>no_full_log</options>
+    <description>Cryptographic operators group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="61112" level="12" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>61103</if_matched_sid>
+    <description>Multiple System critical events</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="62122" level="12">
+    <if_sid>62101</if_sid>
+    <field name="win.system.eventID">^1015$</field>
+    <description>Windows Defender: Antimalware platform detected suspicious $(win.eventdata.detectionType) behaviour ($(win.eventdata.processName))</description>
+    <options>no_full_log</options>
+    <group>pci_dss_5.1,pci_dss_5.2,pci_dss_10.6.1,pci_dss_11.4,gpg13_4.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SI.3,nist_800_53_AU.6,nist_800_53_SI.4,tsc_A1.2,tsc_CC7.2,tsc_CC7.3,tsc_CC6.1,tsc_CC6.8,</group>
+  </rule>
+
+  <rule id="62123" level="12">
+      <if_sid>62101</if_sid>
+      <field name="win.system.eventID">^1116$</field>
+      <description>Windows Defender: Antimalware platform detected $(win.eventdata.severityName) potentially unwanted software ($(win.eventdata.processName))</description>
+      <options>no_full_log</options>
+      <group>pci_dss_5.1,pci_dss_5.2,pci_dss_10.6.1,pci_dss_11.4,gpg13_4.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SI.3,nist_800_53_AU.6,nist_800_53_SI.4,tsc_A1.2,tsc_CC7.2,tsc_CC7.3,tsc_CC6.1,tsc_CC6.8,</group>
+  </rule>
+
+  <rule id="62155" level="12">
+    <if_sid>62101</if_sid>
+    <field name="win.system.eventID">^5008$</field>
+    <description>Windows Defender: Antimalware engine encountered an error and failed because of $(win.eventdata.failureType) at $(win.eventdata.resource)</description>
+    <options>no_full_log</options>
+    <group>pci_dss_5.1,pci_dss_10.2.6,pci_dss_10.6.1,gpg13_4.14,gpg13_10.1,gdpr_IV_35.7.d,gdpr_II_5.1.f,hipaa_164.312.b,nist_800_53_SI.3,nist_800_53_AU.14,nist_800_53_AU.5,nist_800_53_AU.6,tsc_A1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62162" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508007$</field>
+    <description>Windows Defender: ERROR: NO MEMORY</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="62163" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050800C$</field>
+    <description>Windows Defender: ERROR: BAD INPUT DATA</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62164" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508020$</field>
+    <description>Windows Defender: ERROR: BAD CONFIGURATION</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62165" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x805080211$</field>
+    <description>Windows Defender: ERROR: QUARANTINE FAILED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62166" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508022$</field>
+    <description>Windows Defender: ERROR: REBOOT REQUIRED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62167" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508023$</field>
+    <description>Windows Defender: ERROR: THREAT NOT FOUND</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62168" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508024$</field>
+    <description>Windows Defender: ERROR: FULL SCAN REQUIRED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62169" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508025$</field>
+    <description>Windows Defender: ERROR: MANUAL STEPS REQUIRED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62170" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508026$</field>
+    <description>Windows Defender: ERROR: REMOVE NOT SUPPORTED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62171" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508027$</field>
+    <description>Windows Defender: ERROR: REMOVE LOW MEDIUM DISABLED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62172" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508029$</field>
+    <description>Windows Defender: ERROR: RESCAN REQUIRED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62173" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508030$</field>
+    <description>Windows Defender: ERROR: CALLISTO REQUIRED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62174" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508031$</field>
+    <description>Windows Defender: ERROR: PLATFORM OUTDATED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62175" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501000$</field>
+    <description>Windows Defender: ERROR: UI CONSOLIDATION BASE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62176" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501001$</field>
+    <description>Windows Defender: ERROR: ACTIONS FAILED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62177" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501002$</field>
+    <description>Windows Defender: ERROR: NO ENGINE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62178" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501003$</field>
+    <description>Windows Defender: ERROR: ACTIVE THREATS</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62179" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501004$</field>
+    <description>Windows Defender: ERROR: NO INTERNET CONNECTION</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62180" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501101$</field>
+    <description>Windows Defender: ERROR: LUA CANCELLATION</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule> 
+  
+  <rule id="62181" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x805011011$</field>
+    <description>Windows Defender: ERROR: CODE LUA CANCELLED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501102 -->
+  <rule id="62182" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501102$</field>
+    <description>Windows Defender: ERROR: CODE ALREADY SHUTDOWN</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501103 -->
+  <rule id="62183" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501103$</field>
+    <description>Windows Defender: ERROR: CODE ASYNC CALL PENDING</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501104 -->
+  <rule id="62184" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501104$</field>
+    <description>Windows Defender: ERROR: CODE CANCELLED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501105 -->
+  <rule id="62185" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501105$</field>
+    <description>Windows Defender: ERROR: CODE NO TARGETOS</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501106 -->
+  <rule id="62186" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501106$</field>
+    <description>Windows Defender: ERROR: CODE BAD REGEXP</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501107 -->
+  <rule id="62187" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501107$</field>
+    <description>Windows Defender: ERROR: TEST INDUCED ERROR</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80501108 -->
+  <rule id="62188" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80501108$</field>
+    <description>Windows Defender: ERROR: SIG BACKUP DISABLED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508001 -->
+  <rule id="62189" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508001$</field>
+    <description>Windows Defender: ERROR: BAD INIT MODULES</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508002 -->
+  <rule id="62190" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508002$</field>
+    <description>Windows Defender: ERROR: BAD DATABASE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <!-- ERROR 0x80508004 -->
+  <rule id="62191" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508004$</field>
+    <description>Windows Defender: ERROR: BAD UFS</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050800C -->
+  <rule id="62192" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050800C$</field>
+    <description>Windows Defender: ERROR: BAD INPUT DATA</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050800D -->
+  <rule id="62193" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050800D$</field>
+    <description>Windows Defender: ERROR: BAD GLOBAL STORAGE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050800E -->
+  <rule id="62194" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050800E$</field>
+    <description>Windows Defender: ERROR: OBSOLETE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050800F -->
+  <rule id="62195" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050800F$</field>
+    <description>Windows Defender: ERROR: NOT SUPPORTED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508010 -->
+  <rule id="62196" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508010$</field>
+    <description>Windows Defender: ERROR: NO MORE ITEMS</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508011 -->
+  <rule id="62197" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508011$</field>
+    <description>Windows Defender: ERROR: DUPLICATE SCAN ID</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508012 -->
+  <rule id="62198" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508012$</field>
+    <description>Windows Defender: ERROR: BAD SCAN ID</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508013 -->
+  <rule id="62199" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508013$</field>
+    <description>Windows Defender: ERROR: BAD USER DB VERSION</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508014 -->
+  <rule id="62200" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508014$</field>
+    <description>Windows Defender: ERROR: RESTORE FAILED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <!-- ERROR 0x80508016 -->
+  <rule id="62201" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508016$</field>
+    <description>Windows Defender: ERROR: BAD ACTION</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508019 -->
+  <rule id="62202" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508019$</field>
+    <description>Windows Defender: ERROR: NOT FOUND</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80509001 -->
+  <rule id="62203" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80509001$</field>
+    <description>Windows Defender: ERROR: BAD EHANDLE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80509003 -->
+  <rule id="62204" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80509003$</field>
+    <description>Windows Defender: ERROR: RELO KERNEL NOT LOADED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050A001 -->
+  <rule id="62205" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050A001$</field>
+    <description>Windows Defender: ERROR: BAD DB: OPEN</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050A002 -->
+  <rule id="62206" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050A002$</field>
+    <description>Windows Defender: ERROR: BAD DB: HEADER</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050A003 -->
+  <rule id="62207" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050A003$</field>
+    <description>Windows Defender: ERROR: BAD DB: OLD ENGINE</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050A004 -->
+  <rule id="62208" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050A004$</field>
+    <description>Windows Defender: ERROR: BAD DB: CONTENT</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050A005 -->
+  <rule id="62209" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050A005$</field>
+    <description>Windows Defender: ERROR: BAD DB: NOT SIGNED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x8050A002 -->
+  <rule id="62210" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050A002$</field>
+    <description>Windows Defender: ERROR: BAD DB: HEADER</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <!-- ERROR 0x8050801 -->
+  <rule id="62211" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x8050801$</field>
+    <description>Windows Defender: ERROR: REMOVE FAILED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+
+  <!-- ERROR 0x80508018 -->
+  <rule id="62212" level="12">
+    <if_sid>62102</if_sid>
+    <field name="win.eventdata.errorCode">^0x80508018$</field>
+    <description>Windows Defender: ERROR: SCAN ABORTED</description>
+    <options>no_full_log</options>
+    <group>pci_dss_6.5.5,pci_dss_10.6.1,gpg13_4.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SA.11,nist_800_53_AU.6,tsc_CC6.6,tsc_CC7.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+</group>
+
+  <rule id="83001" level="12">
+        <if_sid>83000</if_sid>
+        <id>1116</id>
+        <description>Windows Defender: detected potentially unwanted software</description>
+        <group>pci_dss_10.6.1,gdpr_IV_35.7.d,</group>
+  </rule>
+
+  <rule id="92650" level="12">
+    <if_sid>61138</if_sid>
+    <field name="win.eventdata.imagePath">^%systemroot%\\\\\w+\.exe$</field>
+    <options>no_full_log</options>
+    <description>New Windows Service Created to start from windows root path. Suspicious event as the binary may have been dropped using Windows Admin Shares.</description>
+    <mitre>
+      <id>T1021.002</id>
+      <id>T1569.002</id>
+    </mitre>
+  </rule>
+
+  <rule id="60012" level="10">
+    <if_sid>60000</if_sid>
+    <field name="win.system.severityValue">^CRITICAL$</field>
+    <options>no_full_log</options>
+    <description>Windows critical event.</description>
+    <group>gdpr_IV_35.7.d,gpg13_4.3,system_error,</group>
+  </rule>
+
+  <rule id="60014" level="10" frequency="8" timeframe="240">
+    <if_matched_sid>60011</if_matched_sid>
+    <options>no_full_log</options>
+    <description>Multiple Windows error events.</description>
+  </rule>
+
+  <rule id="60165" level="10">
+    <if_sid>60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-517}$|^S-1-5-21\S+-517$</field>
+    <options>no_full_log</options>
+    <description>Cert publishers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60168" level="10">
+    <if_sid>60141,60142</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-520}$|^S-1-5-21\S+-520$</field>
+    <options>no_full_log</options>
+    <description>Group policy creator owners group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60169" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-553}$|^S-1-5-21\S+-553$</field>
+    <options>no_full_log</options>
+    <description>RAS and IAS servers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60172" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-547}$|^S-1-5-32-547$</field>
+    <options>no_full_log</options>
+    <description>Power users group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60173" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-548}$|^S-1-5-32-548$</field>
+    <options>no_full_log</options>
+    <description>Account operators group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60174" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-549}$|^S-1-5-32-549$</field>
+    <options>no_full_log</options>
+    <description>Server operators group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60177" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-552}$|^S-1-5-32-552$</field>
+    <options>no_full_log</options>
+    <description>Replicators group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60179" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-555}$|^S-1-5-32-555$</field>
+    <options>no_full_log</options>
+    <description>Remote desktop users group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60181" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-557}$|^S-1-5-32-557$</field>
+    <options>no_full_log</options>
+    <description>Incoming forest trust builders group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60182" level="8">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-558}$|^S-1-5-32-558$</field>
+    <options>no_full_log</options>
+    <description>Performance monitor users group changed.</description>
+    <mitre>
+      <id>T1484.001</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60190" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-571}$|^S-1-5-21\S+-571$</field>
+    <options>no_full_log</options>
+    <description>Allowed RODC password replication group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60191" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-21\S+-572}$|^S-1-5-21\S+-572$</field>
+    <options>no_full_log</options>
+    <description>Denied RODC password replication group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60192" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-573}$|^S-1-5-32-573$</field>
+    <options>no_full_log</options>
+    <description>Event log readers group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60193" level="10">
+    <if_sid>60144,60145</if_sid>
+    <field name="win.eventdata.targetSid">^%{S-1-5-32-574}$|^S-1-5-32-574$</field>
+    <options>no_full_log</options>
+    <description>Certificate service DCOM access group changed.</description>
+    <mitre>
+      <id>T1484</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,gpg13_7.10,group_changed,hipaa_164.312.a.2.I,hipaa_164.312.a.2.II,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_IA.4,pci_dss_10.2.5,pci_dss_8.1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,win_group_changed,</group>
+  </rule>
+
+  <rule id="60195" level="10">
+    <if_sid>60131</if_sid>
+    <field name="win.eventdata.failureCode">0x1F</field>
+    <options>no_full_log</options>
+    <description>Windows DC integrity check on decrypted field failed.</description>
+    <mitre>
+      <id>T1207</id>
+    </mitre>
+    <group>attacks,authentication_failed,gdpr_IV_32.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_SI.4,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60196" level="10">
+    <if_sid>60131</if_sid>
+    <field name="win.eventdata.failureCode">0x22</field>
+    <options>no_full_log</options>
+    <description>Windows DC - Possible replay attack.</description>
+    <mitre>
+      <id>T1207</id>
+      <id>T1550.002</id>
+    </mitre>
+    <group>attacks,authentication_failed,gdpr_IV_32.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_SI.4,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60203" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>60107</if_matched_sid>
+    <same_field>win.eventdata.targetUserName</same_field>
+    <options>no_full_log</options>
+    <description>Multiple failed attempts to perform a privileged operation by the same user.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <group>gdpr_IV_32.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_SI.4,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60204" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_group>authentication_failed</if_matched_group>
+    <same_field>win.eventdata.ipAddress</same_field>
+    <options>no_full_log</options>
+    <description>Multiple Windows logon failures.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <group>authentication_failures,gdpr_IV_32.2,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AC.7,nist_800_53_AU.14,nist_800_53_SI.4,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60205" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>60104</if_matched_sid>
+    <same_field>win.eventdata.ipAddress</same_field>
+    <options>no_full_log</options>
+    <description>Multiple Windows audit failure events.</description>
+    <group>gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.6,pci_dss_10.6.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60206" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>60102</if_matched_sid>
+    <options>no_full_log</options>
+    <description>Multiple Windows error security events.</description>
+  </rule>
+
+  <rule id="60207" level="10" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>60101</if_matched_sid>
+    <options>no_full_log</options>
+    <description>Multiple Windows warning security events.</description>
+  </rule>
+
+  <rule id="61061" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>60602</if_matched_sid>
+    <options>no_full_log</options>
+    <description>Multiple Windows error application events.</description>
+  </rule>
+
+  <rule id="61062" level="10" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>60601</if_matched_sid>
+    <options>no_full_log</options>
+    <description>Multiple Windows warning application events.</description>
+  </rule>
+
+  <rule id="61111" level="10" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>61101</if_matched_sid>
+    <description>Multiple System warning events</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="61126" level="10">
+    <if_sid>61113</if_sid>
+    <field name="win.system.eventID">^8016$</field>
+    <description>The browser driver has received too many illegal datagrams from the remote computer</description>
+    <options>no_full_log</options>
+    <mitre>
+      <id>T1203</id>
+      <id>T1499</id>
+    </mitre>
+  </rule>
+
+  <rule id="61132" level="10">
+    <if_sid>61113</if_sid>
+    <field name="win.system.eventID">^8030$</field>
+    <description>The browser driver has discarded too many mailslot messages</description>
+    <options>no_full_log</options>
+    <mitre>
+      <id>T1203</id>
+      <id>T1499</id>
+    </mitre>
+  </rule>
+
+  <rule id="61137" level="10">
+    <if_sid>61113</if_sid>
+    <field name="win.system.eventID">^10051$</field>
+    <description>Some errors occur aproximately every three seconds</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="62103" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>62102</if_matched_sid>
+    <description>Multiple Windows Defender error events</description>
+    <options>no_full_log</options>
+    <group>system_error,gpg13_4.3,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.6,</group>
+  </rule>
+
+  <rule id="62104" level="10" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>62101</if_matched_sid>
+    <description>Multiple Windows Defender warning events</description>
+    <options>no_full_log</options>
+    <group>pci_dss_10.6.1,gpg13_4.12,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_AU.6,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62149" level="10">
+    <if_sid>62101</if_sid>
+    <field name="win.system.eventID">^3002$</field>
+    <description>Windows Defender: $(win.eventdata.feature) real-time protection encountered an error and failed</description>
+    <options>no_full_log</options>
+    <group>pci_dss_5.1,pci_dss_10.6.1,pci_dss_5.2,gdpr_IV_35.7.d,gpg13_4.4,gpg13_4.14,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SI.3,nist_800_53_AU.6,tsc_A1.2,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62157" level="10">
+    <if_sid>62100</if_sid>
+    <field name="win.system.eventID">^5010$</field>
+    <description>Windows Defender: Antivirus scanning for malware and other potentially unwanted software is disabled</description>
+    <options>no_full_log</options>
+    <group>pci_dss_5.1,pci_dss_10.2.6,pci_dss_10.6.1,gpg13_4.14,gpg13_10.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SI.3,nist_800_53_AU.14,nist_800_53_AU.5,nist_800_53_AU.6,tsc_A1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="62159" level="10">
+    <if_sid>62100</if_sid>
+    <field name="win.system.eventID">^5012$</field>
+    <description>Windows Defender: Antivirus scanning for viruses is disabled</description>
+    <options>no_full_log</options>
+    <group>pci_dss_5.1,pci_dss_10.2.6,pci_dss_10.6.1,gpg13_4.14,gpg13_10.1,gdpr_IV_35.7.d,hipaa_164.312.b,nist_800_53_SI.3,nist_800_53_AU.14,nist_800_53_AU.5,nist_800_53_AU.6,tsc_A1.2,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="63106" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>63102</if_matched_sid>
+    <description>Multiple Eventlog error events</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="63107" level="10" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>63101</if_matched_sid>
+    <description>Multiple Eventlog warning events</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="64109" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>64101</if_matched_sid>
+    <description>Multiple remote access login failures</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <options>no_full_log</options>
+    <group>authentication_failures,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,pci_dss_8.1.5,gdpr_IV_35.7.d,gdpr_IV_32.2,hipaa_164.312.b,hipaa_164.312.a.1,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SI.4,nist_800_53_AC.2,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="64110" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>64107</if_matched_sid>
+    <description>Multiple TS Gateway login failures</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <options>no_full_log</options>
+    <group>authentication_failures,pci_dss_10.2.4,pci_dss_10.2.5,pci_dss_11.4,gdpr_IV_35.7.d,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SI.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="67009" level="10" frequency="$MS_FREQ" timeframe="120">
+    <if_matched_sid>67002</if_matched_sid>
+    <description>Multiple Windows Firewall With Advanced Security warning events</description>
+    <options>no_full_log</options>
+    <group>pci_dss_1.4,gpg13_4.12,gdpr_IV_35.7.d,hipaa_164.312.a.1,nist_800_53_SC.7,tsc_CC6.7,tsc_CC6.8,</group>
+  </rule>
+
+  <rule id="67010" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_sid>67003</if_matched_sid>
+    <description>Multiple Windows Firewall With Advanced Security error events</description>
+    <options>no_full_log</options>
+    <group>system_error,pci_dss_1.4,gpg13_4.12,gdpr_IV_35.7.d,hipaa_164.312.a.1,nist_800_53_SC.7,tsc_CC6.7,tsc_CC6.8,</group>
+  </rule>
+
+  <rule id="513" level="9">
+    <if_sid>510</if_sid>
+    <match>^Windows Malware</match>
+    <description>Windows malware detected.</description>
+    <group>rootcheck,pci_dss_10.6.1,gpg13_4.2,gdpr_IV_35.7.d,</group>
+  </rule>
+
+  <rule id="518" level="9">
+    <if_sid>514</if_sid>
+    <match>Adware|Spyware</match>
+    <description>Windows Adware/Spyware application found.</description>
+    <mitre>
+      <id>T1072</id>
+    </mitre>
+    <group>rootcheck,pci_dss_10.6.1,gpg13_4.2,gdpr_IV_35.7.d,</group>
+  </rule>
+
+  <rule id="60115" level="9">
+    <if_sid>60103</if_sid>
+    <field name="win.system.eventID">^644$|^4740$</field>
+    <options>no_full_log</options>
+    <description>User account locked out (multiple login errors).</description>
+    <mitre>
+      <id>T1110</id>
+      <id>T1531</id>
+    </mitre>
+    <group>authentication_failures,gdpr_IV_35.7.d,gpg13_7.5,hipaa_164.312.a.1,nist_800_53_AC.7,nist_800_53_SI.4,pci_dss_11.4,pci_dss_8.1.6,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60117" level="9">
+    <if_sid>60100</if_sid>
+    <field name="win.system.eventID">^1102$</field>
+    <options>no_full_log</options>
+    <description>Windows audit log was cleared.</description>
+    <mitre>
+      <id>T1070.004</id>
+    </mitre>
+    <group>gdpr_IV_35.7.d,gpg13_10.1,hipaa_164.312.b,logs_cleared,nist_800_53_AU.6,pci_dss_10.6.1,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <rule id="60602" level="9">
+    <if_sid>60003</if_sid>
+    <field name="win.system.severityValue">^ERROR$</field>
+    <options>no_full_log</options>
+    <description>Windows application error event.</description>
+    <group>gdpr_IV_35.7.d,gpg13_4.3,system_error,</group>
+  </rule>
+
+  <rule id="60652" level="9">
+    <if_sid>60648</if_sid>
+    <field name="win.system.eventID">^3025$</field>
+    <options>no_full_log</options>
+    <description>Critical Error: System low on resources.</description>
+  </rule>
+
+  <rule id="60759" level="9">
+    <if_sid>60749</if_sid>
+    <field name="win.system.eventID">^4612$</field>
+    <options>no_full_log</options>
+    <description>The COM+ event system ran out of memory during its internal processing.</description>
+  </rule>  
+  
+  <rule id="60788" level="9">
+    <if_sid>60774</if_sid>
+    <field name="win.system.eventID">^6004$</field>
+    <options>no_full_log</options>
+    <description>The winlogon notification subscriber failed a critical notification event.</description>
+  </rule>
+
+  <rule id="60844" level="9">
+    <if_sid>60838</if_sid>
+    <field name="win.system.eventID">^4103$</field>
+    <options>no_full_log</options>
+    <description>MS DTC run out of memory.</description>
+  </rule>
+
+  <rule id="60893" level="9">
+    <if_sid>60838</if_sid>
+    <field name="win.system.eventID">^4209$</field>
+    <options>no_full_log</options>
+    <description>A critical error occurred in an MS DTC component, process terminating.</description>
+    <mitre>
+      <id>T1489</id>
+    </mitre>
+  </rule>
+
+  <rule id="60907" level="9">
+    <if_sid>60838</if_sid>
+    <field name="win.system.eventID">^4233$</field>
+    <options>no_full_log</options>
+    <description>An MS DTC component was unable to allocate memory for a critical operation.</description>
+  </rule>
+
+  <rule id="60922" level="9">
+    <if_sid>60838</if_sid>
+    <field name="win.system.eventID">^4362$</field>
+    <options>no_full_log</options>
+    <description>Illegal transition caused fatal error.</description>
+  </rule>
+
+  <rule id="60923" level="9">
+    <if_sid>60838</if_sid>
+    <field name="win.system.eventID">^4363$</field>
+    <options>no_full_log</options>
+    <description>Out of memory caused fatal error.</description>
+  </rule>
+
+  <rule id="60988" level="9">
+    <if_sid>60838</if_sid>
+    <field name="win.system.eventID">^53267$</field>
+    <options>no_full_log</options>
+    <description>Received unknown connection manager message type.</description>
+  </rule>
+
+  <rule id="61017" level="9">
+    <if_sid>61016</if_sid>
+    <field name="win.system.eventID">^1026$</field>
+    <options>no_full_log</options>
+    <description>The process was terminated due to an unhandled exception.</description>
+    <mitre>
+      <id>T1489</id>
+    </mitre>
+  </rule>
+
+  <rule id="61021" level="9">
+    <if_sid>61016</if_sid>
+    <field name="win.system.eventID">^1023$</field>
+    <options>no_full_log</options>
+    <description>.NET Runtime - Fatal execution engine error.</description>
+  </rule>
+
+  <rule id="61103" level="9">
+    <if_sid>60002</if_sid>
+    <field name="win.system.severityValue">^CRITICAL$</field>
+    <field name="win.umdfDeviceOffline.friendlyName" negate="yes">Goodix fingerprint</field>
+    <description>Windows System critical event</description>
+    <group>system_error,gpg13_4.3,gdpr_IV_35.7.d,</group>
+  </rule>
+
+  <rule id="61105" level="9">
+    <if_sid>61103</if_sid>
+    <field name="win.system.eventID">^41$</field>
+    <field name="win.system.providerName">^Microsoft-Windows-Kernel-Power$</field>
+    <description>The system stopped responding, crashed or lost power unexpectedly</description>
+    <mitre>
+      <id>T1489</id>
+    </mitre>
+    <options>no_full_log</options>
+  </rule>

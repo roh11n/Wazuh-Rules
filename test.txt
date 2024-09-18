@@ -1,0 +1,21 @@
+<rule id="5706" level="6">
+    <if_sid>5700</if_sid>
+    <match>Did not receive identification string from</match>
+    <description>sshd: insecure connection attempt (scan).</description>
+</rule>
+
+4739
+
+
+
+<rule id="900110" level="8" timeframe="300">
+    <if_sid>18207</if_sid>
+    <description>Windows: Administrators Group Changed(Member Added).</description>
+    <options>no_full_log</options>
+</rule>
+
+<rule id="900111" level="12" timeframe="300">
+    <if_sid>18208</if_sid>
+    <description>Windows: Administrators Group Changed(Member Removed).</description>
+    <options>no_full_log</options>
+</rule>
