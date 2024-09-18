@@ -1,0 +1,29 @@
+title: Redline Infostealer - Folder added to the Windows Defender Exclusion List
+id: 6e51cf71-0f9b-4113-9f9b-98b2264e2a7a
+related:
+    - id: 4b038669-3683-42e4-afc4-4dd2ca5ffcab
+      type: derived
+status: test
+description: The infostealer creates a Windows Defender exclusion criteria on the victim endpoint to evade detection by Windows Defender antimalware.
+references:
+    - https://tria.ge/230111-xbyetshf8t/behavioral1
+    - https://wazuh.com/blog/how-to-detect-redline-infostealer-with-wazuh/
+author: Rohan Goswami
+date: 2024/05/16
+tags:
+    - T1204
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '\powershell.exe'
+        commandLine|contains:    
+            - '-ExclusionPath'
+            - 'UserProfile|ProgramFiles'
+            - '-Force'
+    condition: selection
+falsepositives:
+    - unknown
+level: medium

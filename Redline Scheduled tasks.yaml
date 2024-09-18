@@ -1,0 +1,32 @@
+title: Redline Infostealer - Suspicious Scheduled Tasks
+id: d62b3f1c-d111-4421-a44d-73c530f40c0b
+related:
+    - id: 4b038669-3683-42e4-afc4-4dd2ca5ffcab
+      type: derived
+    - id: 6e51cf71-0f9b-4113-9f9b-98b2264e2a7a
+      type: derived  
+status: test
+description: The malware maintains persistence by creating a Windows scheduled task.
+references:
+    - https://tria.ge/230111-xbyetshf8t/behavioral1
+    - https://wazuh.com/blog/how-to-detect-redline-infostealer-with-wazuh/
+author: Rohan Goswami
+date: 2024/05/16
+tags:
+    - T1053
+    - attack.scheduled_task
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '\schtasks.exe'
+        commandLine|contains:    
+            - 'C'
+            - 'Create'
+            - 'tn'
+    condition: selection
+falsepositives:
+    - Legit Tasks scheduled by system admin.
+level: High

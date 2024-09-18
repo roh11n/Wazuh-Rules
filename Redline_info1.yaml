@@ -1,0 +1,27 @@
+title: Potential Redline Infostealer Execution
+id: 4b038669-3683-42e4-afc4-4dd2ca5ffcab
+status: test
+description: RedLine Infostealer activity, Suspicious encoded PowerShell command detected.
+references:
+    - https://tria.ge/230111-xbyetshf8t/behavioral1
+    - https://wazuh.com/blog/how-to-detect-redline-infostealer-with-wazuh/
+author: Rohan Goswami
+date: 2024/05/16
+tags:
+    - attack.Execution
+    - T1059.001
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - 'powershell.exe'
+        ParentImage|endswith:    
+            - 'vbx.exe'
+        commandLine|contains:    
+            - '-EncodedCommand'
+    condition: selection
+falsepositives:
+    - Unknown
+level: High
