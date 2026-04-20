@@ -157,7 +157,7 @@ export default function Detail() {
         <ScanProgress status={scan} />
       </div>
 
-      {isDone && r.risk && (
+      {isDone && r.risk && scan.mode !== "shodan_search" && scan.mode !== "dork" && (
         <div className="mb-8 border border-border bg-card p-6" data-testid="risk-summary">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <div>
@@ -253,7 +253,7 @@ export default function Detail() {
             </div>
           )}
 
-          {r.domain && (
+          {r.domain && scan.mode !== "shodan_search" && (
             <Section icon={Globe} title="Domain Intelligence" testId="sec-domain">
               <KV k="registrar" v={r.domain.registrar} />
               <KV k="registrant" v={r.domain.registrant} />
@@ -272,7 +272,7 @@ export default function Detail() {
             </Section>
           )}
 
-          {r.dns_records && (
+          {r.dns_records && scan.mode !== "shodan_search" && (
             <Section icon={Network} title="DNS Records" testId="sec-dns">
               <KV k="A" v={r.dns_records.a?.join(", ")} />
               <KV k="AAAA" v={r.dns_records.aaaa?.join(", ")} />
@@ -283,77 +283,87 @@ export default function Detail() {
             </Section>
           )}
 
-          <Section icon={Server} title="Subdomains" count={r.subdomains?.length} testId="sec-subs">
-            <Table
-              cols={[{k:"subdomain",label:"Subdomain"},{k:"source",label:"Source"}]}
-              rows={(r.subdomains || []).slice(0, 100)}
-            />
-          </Section>
+          {(r.subdomains?.length > 0) && (
+            <Section icon={Server} title="Subdomains" count={r.subdomains?.length} testId="sec-subs">
+              <Table
+                cols={[{k:"subdomain",label:"Subdomain"},{k:"source",label:"Source"}]}
+                rows={(r.subdomains || []).slice(0, 100)}
+              />
+            </Section>
+          )}
 
-          <Section icon={Globe} title="Live Hosts" count={r.live_hosts?.length} testId="sec-live">
-            <Table
-              cols={[
-                {k:"host",label:"Host"},
-                {k:"status_code",label:"Status"},
-                {k:"server",label:"Server"},
-                {k:"title",label:"Title", render:(x)=><span className="block truncate max-w-[260px]">{x.title || "—"}</span>},
-              ]}
-              rows={r.live_hosts || []}
-            />
-          </Section>
+          {(r.live_hosts?.length > 0) && (
+            <Section icon={Globe} title="Live Hosts" count={r.live_hosts?.length} testId="sec-live">
+              <Table
+                cols={[
+                  {k:"host",label:"Host"},
+                  {k:"status_code",label:"Status"},
+                  {k:"server",label:"Server"},
+                  {k:"title",label:"Title", render:(x)=><span className="block truncate max-w-[260px]">{x.title || "—"}</span>},
+                ]}
+                rows={r.live_hosts || []}
+              />
+            </Section>
+          )}
 
-          <Section icon={Lock} title="TLS Certificates" count={r.tls_certs?.length} testId="sec-tls">
-            {(r.tls_certs || []).map((c, i) => (
-              <div key={i} className="mb-3 pb-3 border-b border-border last:border-0 last:mb-0 last:pb-0">
-                <div className="font-mono text-sm text-cyan mb-2">{c.host}</div>
-                <KV k="issuer" v={c.issuer?.commonName || c.issuer?.organizationName} />
-                <KV k="not_after" v={c.not_after} />
-                <KV k="expired" v={c.expired ? "YES" : "NO"} />
-                <KV k="self_signed" v={c.self_signed ? "YES" : "NO"} />
-              </div>
-            ))}
-            {(!r.tls_certs || r.tls_certs.length === 0) && <p className="text-xs text-muted-foreground font-mono">No certificates retrieved.</p>}
-          </Section>
+          {(r.tls_certs?.length > 0) && (
+            <Section icon={Lock} title="TLS Certificates" count={r.tls_certs?.length} testId="sec-tls">
+              {(r.tls_certs || []).map((c, i) => (
+                <div key={i} className="mb-3 pb-3 border-b border-border last:border-0 last:mb-0 last:pb-0">
+                  <div className="font-mono text-sm text-cyan mb-2">{c.host}</div>
+                  <KV k="issuer" v={c.issuer?.commonName || c.issuer?.organizationName} />
+                  <KV k="not_after" v={c.not_after} />
+                  <KV k="expired" v={c.expired ? "YES" : "NO"} />
+                  <KV k="self_signed" v={c.self_signed ? "YES" : "NO"} />
+                </div>
+              ))}
+            </Section>
+          )}
 
-          <Section icon={Network} title="IP Intelligence" count={r.ips?.length} testId="sec-ips">
-            <Table
-              cols={[
-                {k:"ip",label:"IP"},
-                {k:"country",label:"CC"},
-                {k:"org",label:"Org",render:(x)=>x.org || x.asn || "—"},
-                {k:"reputation_score",label:"Rep"},
-                {k:"flagged",label:"Flag",render:(x)=>x.flagged ? <span className="text-risk-critical">⬤</span> : <span className="text-risk-low">○</span>},
-              ]}
-              rows={r.ips || []}
-            />
-          </Section>
+          {(r.ips?.length > 0) && (
+            <Section icon={Network} title="IP Intelligence" count={r.ips?.length} testId="sec-ips">
+              <Table
+                cols={[
+                  {k:"ip",label:"IP"},
+                  {k:"country",label:"CC"},
+                  {k:"org",label:"Org",render:(x)=>x.org || x.asn || "—"},
+                  {k:"reputation_score",label:"Rep"},
+                  {k:"flagged",label:"Flag",render:(x)=>x.flagged ? <span className="text-risk-critical">⬤</span> : <span className="text-risk-low">○</span>},
+                ]}
+                rows={r.ips || []}
+              />
+            </Section>
+          )}
 
-          <Section icon={Cpu} title="Tech Fingerprints" count={r.tech_fingerprints?.length} testId="sec-tech">
-            {(r.tech_fingerprints || []).map((t, i) => (
-              <div key={i} className="mb-3 pb-3 border-b border-border last:border-0 last:mb-0 last:pb-0">
-                <div className="font-mono text-sm text-cyan mb-2">{t.host}</div>
-                <KV k="server" v={t.server} />
-                <KV k="cms" v={t.cms} />
-                <KV k="cdn" v={t.cdn} />
-                <KV k="js_libs" v={t.js_libraries?.join(", ")} />
-                <KV k="frameworks" v={t.frameworks?.join(", ")} />
-                <KV k="favicon_hash" v={t.favicon_hash} />
-              </div>
-            ))}
-            {(!r.tech_fingerprints || r.tech_fingerprints.length === 0) && <p className="text-xs text-muted-foreground font-mono">No fingerprints.</p>}
-          </Section>
+          {(r.tech_fingerprints?.length > 0) && (
+            <Section icon={Cpu} title="Tech Fingerprints" count={r.tech_fingerprints?.length} testId="sec-tech">
+              {(r.tech_fingerprints || []).map((t, i) => (
+                <div key={i} className="mb-3 pb-3 border-b border-border last:border-0 last:mb-0 last:pb-0">
+                  <div className="font-mono text-sm text-cyan mb-2">{t.host}</div>
+                  <KV k="server" v={t.server} />
+                  <KV k="cms" v={t.cms} />
+                  <KV k="cdn" v={t.cdn} />
+                  <KV k="js_libs" v={t.js_libraries?.join(", ")} />
+                  <KV k="frameworks" v={t.frameworks?.join(", ")} />
+                  <KV k="favicon_hash" v={t.favicon_hash} />
+                </div>
+              ))}
+            </Section>
+          )}
 
-          <Section icon={Radar} title="Open Ports / Services" count={r.services?.length} testId="sec-ports">
-            <Table
-              cols={[
-                {k:"host",label:"Host"},
-                {k:"port",label:"Port"},
-                {k:"service",label:"Service"},
-                {k:"banner",label:"Banner", render:(x)=><span className="block truncate max-w-[360px] text-muted-foreground">{x.banner || "—"}</span>},
-              ]}
-              rows={r.services || []}
-            />
-          </Section>
+          {(r.services?.length > 0) && (
+            <Section icon={Radar} title="Open Ports / Services" count={r.services?.length} testId="sec-ports">
+              <Table
+                cols={[
+                  {k:"host",label:"Host"},
+                  {k:"port",label:"Port"},
+                  {k:"service",label:"Service"},
+                  {k:"banner",label:"Banner", render:(x)=><span className="block truncate max-w-[360px] text-muted-foreground">{x.banner || "—"}</span>},
+                ]}
+                rows={r.services || []}
+              />
+            </Section>
+          )}
 
           {r.shodan?.length > 0 && (
             <Section icon={Zap} title="Shodan Intel" count={r.shodan.length} testId="sec-shodan">
@@ -430,50 +440,54 @@ export default function Detail() {
             </Section>
           )}
 
-          <Section icon={Shield} title="Passive DNS" count={r.passive_dns?.length} testId="sec-pdns">
-            <Table
-              cols={[
-                {k:"hostname",label:"Hostname"},
-                {k:"ip",label:"IP"},
-                {k:"record_type",label:"Type"},
-                {k:"last_seen",label:"Last Seen"},
-              ]}
-              rows={(r.passive_dns || []).slice(0, 50)}
-            />
-          </Section>
+          {(r.passive_dns?.length > 0) && (
+            <Section icon={Shield} title="Passive DNS" count={r.passive_dns?.length} testId="sec-pdns">
+              <Table
+                cols={[
+                  {k:"hostname",label:"Hostname"},
+                  {k:"ip",label:"IP"},
+                  {k:"record_type",label:"Type"},
+                  {k:"last_seen",label:"Last Seen"},
+                ]}
+                rows={(r.passive_dns || []).slice(0, 50)}
+              />
+            </Section>
+          )}
 
-          <Section icon={Camera} title="Screenshots" count={r.screenshots?.length} testId="sec-ss">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(r.screenshots || []).map((s, i) => (
-                <div key={i} className="border border-border">
-                  <div className="px-3 py-2 border-b border-border font-mono text-xs text-cyan truncate">{s.host}</div>
-                  {s.base64_data && (
-                    <img src={`data:image/png;base64,${s.base64_data}`} alt={s.host} className="w-full block" />
-                  )}
+          {(r.screenshots?.length > 0) && (
+            <Section icon={Camera} title="Screenshots" count={r.screenshots?.length} testId="sec-ss">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {r.screenshots.map((s, i) => (
+                  <div key={i} className="border border-border">
+                    <div className="px-3 py-2 border-b border-border font-mono text-xs text-cyan truncate">{s.host}</div>
+                    {s.base64_data && (
+                      <img src={`data:image/png;base64,${s.base64_data}`} alt={s.host} className="w-full block" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {(r.dorking?.length > 0) && (
+            <Section icon={SearchIcon} title="Google Dorking" count={r.dorking?.length} testId="sec-dork">
+              {r.dorking.map((d, i) => (
+                <div key={i} className="mb-4 last:mb-0">
+                  <div className="font-mono text-xs text-cyan border-l-2 border-cyan pl-2 py-1 mb-2 break-all">{d.query}</div>
+                  {d.results?.length ? (
+                    <ul className="space-y-1 pl-4">
+                      {d.results.slice(0, 5).map((e, j) => (
+                        <li key={j} className="text-xs">
+                          <div className="text-foreground">{e.title}</div>
+                          <a href={e.url} target="_blank" rel="noreferrer" className="font-mono text-cyan hover:underline break-all">{e.url}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : <p className="text-xs text-muted-foreground font-mono pl-2">No results (possibly rate-limited)</p>}
                 </div>
               ))}
-            </div>
-            {(!r.screenshots || r.screenshots.length === 0) && <p className="text-xs text-muted-foreground font-mono">No screenshots captured.</p>}
-          </Section>
-
-          <Section icon={SearchIcon} title="Google Dorking" count={r.dorking?.length} testId="sec-dork">
-            {(r.dorking || []).map((d, i) => (
-              <div key={i} className="mb-4 last:mb-0">
-                <div className="font-mono text-xs text-cyan border-l-2 border-cyan pl-2 py-1 mb-2 break-all">{d.query}</div>
-                {d.results?.length ? (
-                  <ul className="space-y-1 pl-4">
-                    {d.results.slice(0, 5).map((e, j) => (
-                      <li key={j} className="text-xs">
-                        <div className="text-foreground">{e.title}</div>
-                        <a href={e.url} target="_blank" rel="noreferrer" className="font-mono text-cyan hover:underline break-all">{e.url}</a>
-                      </li>
-                    ))}
-                  </ul>
-                ) : <p className="text-xs text-muted-foreground font-mono pl-2">No results (possibly rate-limited)</p>}
-              </div>
-            ))}
-            {(!r.dorking || r.dorking.length === 0) && <p className="text-xs text-muted-foreground font-mono">Dorking skipped or failed.</p>}
-          </Section>
+            </Section>
+          )}
         </div>
       )}
     </div>
