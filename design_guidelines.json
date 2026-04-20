@@ -1,0 +1,101 @@
+{
+  "theme": "dark",
+  "archetype": "Archetype 4 (Swiss Brutalist) + Archetype 7 (Terminal Accents)",
+  "typography": {
+    "headings": {
+      "font": "IBM Plex Sans",
+      "weights": ["400", "600"],
+      "classes": "font-sans tracking-tight"
+    },
+    "body": {
+      "font": "IBM Plex Sans",
+      "weights": ["400", "500"],
+      "classes": "font-sans text-zinc-300"
+    },
+    "monospace": {
+      "font": "JetBrains Mono",
+      "weights": ["400", "500", "700"],
+      "classes": "font-mono text-zinc-300 tracking-tight",
+      "usage": "Use strictly for IP addresses, domain names, hashes, DNS records, and technical telemetry."
+    }
+  },
+  "colors": {
+    "background": "#09090B",
+    "surface": "#18181B",
+    "border": "#27272A",
+    "text_primary": "#FAFAFA",
+    "text_secondary": "#A1A1AA",
+    "accents": {
+      "primary": "#06b6d4",
+      "primary_hover": "#0891b2",
+      "low_risk": "#22c55e",
+      "medium_risk": "#eab308",
+      "high_risk": "#f97316",
+      "critical_risk": "#ef4444"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "The 'Control Room' Grid - High density, strict grid lines, optimized for data scanning.",
+    "container_padding": "p-6",
+    "gap": "gap-4 md:gap-6",
+    "surface_strategy": "Grid Borders (The 'Technical' Look). Use flat solid backgrounds with sharp 1px borders. Avoid soft shadows. Expose the structural skeleton of the dashboard.",
+    "border_radius": "rounded-sm"
+  },
+  "components": {
+    "buttons": {
+      "style": "Flat, sharp edges (rounded-sm), high contrast. Primary actions use Cyan or White.",
+      "hover_state": "Slight brightness increase, no lifting.",
+      "classes": "bg-primary text-primary-foreground hover:bg-primary/90 font-mono uppercase tracking-widest text-xs px-6 py-3"
+    },
+    "cards": {
+      "style": "Flat background, 1px border. No shadows. Optional 'Tracing Beam' effect for critical risk cards.",
+      "classes": "bg-zinc-950 border border-zinc-800 rounded-sm"
+    },
+    "tables": {
+      "style": "Dense tabular layout. Use monospace for data columns. Explicit left-alignment. Crisp row borders.",
+      "classes": "w-full text-sm text-left font-mono"
+    },
+    "badges": {
+      "style": "Used for Severity/Risk scores. Outline style preferred or highly opaque backgrounds with crisp borders.",
+      "classes": "px-2 py-0.5 border text-xs font-mono rounded-sm uppercase"
+    },
+    "stepper": {
+      "style": "Live scan progress. Use vertical or horizontal connected nodes. Active node pulses cyan.",
+      "classes": "flex flex-col md:flex-row items-start md:items-center font-mono text-xs"
+    }
+  },
+  "motion": {
+    "interactions": "Minimal and crisp. Focus on micro-interactions for data loading.",
+    "transitions": "transition-colors duration-150 ease-in-out",
+    "loading": "Use monospace ASCII spinners or matrix-style rapid text decoding effects for the live scanning phase."
+  },
+  "icons": {
+    "library": "lucide-react",
+    "style": "Sharp, technical icons. Use Shield, Globe, Server, Terminal, Lock, AlertTriangle."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "hero_background",
+        "url": "https://images.unsplash.com/photo-1707332287886-84315bbb04bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxjeWJlcnNlY3VyaXR5JTIwYWJzdHJhY3QlMjBkYXJrfGVufDB8fHx8MTc3NjY3ODY3Nnww&ixlib=rb-4.1.0&q=85",
+        "description": "Black and blue abstract squares/rectangles. Use as a very low opacity (10-20%) background in the initial Landing/Scan trigger page behind the main domain input, combined with a vignette or radial gradient mask to fade it into the black background."
+      }
+    ]
+  },
+  "accessibility": {
+    "contrast": "Strict APCA compliance. Ensure critical/red badges have sufficient contrast against dark background. Use text-shadow on overlapping elements.",
+    "testing": "Add data-testid attributes to all interactive elements, inputs, buttons, and risk score outputs."
+  },
+  "instructions_to_main_agent": [
+    "Implement the UI using React, Tailwind CSS, and Shadcn UI (.js files, not .tsx).",
+    "Start by updating tailwind.config.js and index.css with the deep dark theme colors (zinc-950 background, zinc-900 surfaces).",
+    "Integrate 'IBM Plex Sans' and 'JetBrains Mono' via Google Fonts in index.html.",
+    "The Landing Page should feature a massive, centrally aligned domain input field with monospace typography, toggles below it, and the background image layered behind a heavy black gradient.",
+    "The Live Scan Progress view should feel like a terminal - lots of rapid status updates, glowing active steps, and monospace logs.",
+    "The Scan Result Page must be a 'Control Room' grid layout. Heavily utilize Shadcn tables for Live Hosts, IP Intelligence, and Tech Fingerprints. Use 'JetBrains Mono' for all IPs, domains, and hashes.",
+    "Risk Score should be prominent, using the severity colors (Low=Green, Medium=Yellow, High=Orange, Critical=Red). Use hard 1px borders around severity badges.",
+    "Do NOT use soft rounding (no rounded-xl or rounded-full for structural elements). Keep it sharp with 'rounded-sm' or 'rounded-none'.",
+    "Include 'data-testid' on all interactive elements (e.g., 'scan-input', 'start-scan-button', 'download-report-btn').",
+    "Ensure dark mode is forced or set as default."
+  ]
+}
