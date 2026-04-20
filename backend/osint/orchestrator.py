@@ -250,6 +250,13 @@ class Orchestrator:
         sh = await self._safe(self.shodan.lookup(ip))
         if sh:
             result.shodan = [sh]
+            # Enrich IP record from Shodan if IPInfo missing
+            if result.ips and sh.found:
+                ipr = result.ips[0]
+                if not ipr.country: ipr.country = sh.country_name
+                if not ipr.city: ipr.city = sh.city
+                if not ipr.org: ipr.org = sh.org or sh.isp
+                if not ipr.asn: ipr.asn = sh.asn
 
         await _p("port_scan", 72, "TCP port scan (supplementary)")
         if not req.skip_ports:
