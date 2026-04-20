@@ -26,6 +26,8 @@ from osint.enrichment.virustotal_adapter import VirusTotalAdapter
 from osint.enrichment.ip_whois import IPWhoisCollector
 from osint.enrichment.passive_dns_otx import PassiveDNSOTX
 from osint.enrichment.shodan_adapter import ShodanAdapter
+from osint.enrichment.shodan_search import ShodanSearcher
+from osint.enrichment.nvd_adapter import NVDAdapter
 
 
 ProgressCallback = Callable[[str, int, str], Awaitable[None]]
@@ -33,7 +35,7 @@ IP_RE = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")
 
 
 class Orchestrator:
-    def __init__(self):
+    def __init__(self, db=None):
         self.rdap = RDAPCollector()
         self.whois = WhoisFallbackCollector()
         self.subs = PassiveSubdomainCollector()
@@ -54,6 +56,8 @@ class Orchestrator:
         self.ip_whois = IPWhoisCollector()
         self.passive_dns = PassiveDNSOTX()
         self.shodan = ShodanAdapter()
+        self.shodan_search = ShodanSearcher()
+        self.nvd = NVDAdapter(db=db)
 
     async def run(self, req: ScanRequest, progress: ProgressCallback | None = None) -> ScanResult:
         mode = (req.mode or "domain").lower()
@@ -72,8 +76,18 @@ class Orchestrator:
             await self._website_scan(req, result, _p)
         elif mode == "dork":
             await self._dork_scan(req, result, _p)
+        elif mode == "shodan_search":
+            await self._shodan_search(req, result, _p)
         else:
             await self._domain_scan(req, result, _p)
+
+        # Enrich vulnerabilities with NVD data
+        all_cves: list[str] = []
+        for s in result.shodan:
+            all_cves.extend(s.vulns)
+        if all_cves:
+            await _p("nvd", 96, f"Enriching {len(set(all_cves))} CVEs via NVD")
+            result.cves = await self._safe(self.nvd.enrich(all_cves[:30]), default=[])
 
         await _p("risk", 98, "Computing risk score")
         result.risk = compute_risk(result)
@@ -276,6 +290,13 @@ class Orchestrator:
             self.dorker.run(req.target, custom_queries=queries, use_defaults=not queries),
             default=[],
         )
+
+    # ───────────────────────── SHODAN SEARCH ─────────────────
+    async def _shodan_search(self, req: ScanRequest, result: ScanResult, _p: ProgressCallback):
+        await _p("shodan_search", 20, f"Shodan search: {req.target}")
+        res = await self._safe(self.shodan_search.search(req.target, limit=50))
+        if res:
+            result.shodan_search = res
 
     # ───────────────────────── helpers ─────────────────────────
     async def _enum_dirs(self, host: str, base_url: str):

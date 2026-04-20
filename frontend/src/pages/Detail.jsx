@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowLeft, FileText, Download, Globe, Server, Lock, Shield, Network, Camera, Search as SearchIcon, Cpu, Radar, FolderOpen, Zap } from "lucide-react";
+import { ArrowLeft, FileText, Download, Globe, Server, Lock, Shield, Network, Camera, Search as SearchIcon, Cpu, Radar, FolderOpen, Zap, AlertTriangle, Database, ExternalLink } from "lucide-react";
 import { getScan, reportUrl } from "../lib/api";
 import ScanProgress from "../components/ScanProgress";
 import SeverityBadge from "../components/SeverityBadge";
@@ -54,6 +54,14 @@ function StatusPill({ status }) {
     </span>
   );
 }
+
+const SEV_CLS = {
+  CRITICAL: "border-risk-critical text-risk-critical",
+  HIGH: "border-risk-high text-risk-high",
+  MEDIUM: "border-risk-medium text-risk-medium",
+  LOW: "border-risk-low text-risk-low",
+  NONE: "border-muted-foreground text-muted-foreground",
+};
 
 const KV = ({ k, v, mono = true }) => (
   <div className="flex gap-3 py-1 text-sm">

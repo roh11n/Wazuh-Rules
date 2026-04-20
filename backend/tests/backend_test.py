@@ -1,11 +1,16 @@
-"""Backend tests for OSINT Pipeline multi-mode API (domain/website/ip/dork)."""
+"""Backend tests for OSINT Pipeline multi-mode API (domain/website/ip/dork/shodan_search)."""
 import os
+import sys
 import time
+import asyncio
 import pytest
 import requests
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 API = f"{BASE_URL}/api"
+
+# Make backend package importable for NVD adapter direct test
+sys.path.insert(0, "/app/backend")
 
 
 @pytest.fixture(scope="module")
@@ -219,3 +224,150 @@ class TestDomainScanE2E:
         assert result.get("ip_whois"), "ip_whois empty"
 
         client.delete(f"{API}/scans/{sid}")
+
+
+# ── Shodan Search mode validation ───────────────────────
+class TestShodanSearchValidation:
+    def test_shodan_search_rejects_empty(self, client):
+        r = client.post(f"{API}/scans", json={"target": "", "mode": "shodan_search"})
+        assert r.status_code == 400
+
+    def test_shodan_search_rejects_whitespace(self, client):
+        r = client.post(f"{API}/scans", json={"target": "   ", "mode": "shodan_search"})
+        assert r.status_code == 400
+
+    def test_shodan_search_accepts_query(self, client):
+        r = client.post(f"{API}/scans", json={
+            "target": 'port:22 product:"OpenSSH"', "mode": "shodan_search",
+        })
+        assert r.status_code == 200
+        d = r.json()
+        assert d["mode"] == "shodan_search"
+        # query is preserved (spaces/colons) in target
+        assert "port:22" in d["target"]
+        client.delete(f"{API}/scans/{d['id']}")
+
+
+# ── Shodan Search E2E ───────────────────────────────────
+class TestShodanSearchE2E:
+    def test_shodan_search_apache_nl_port80(self, client):
+        r = client.post(f"{API}/scans", json={
+            "target": 'apache country:"NL" port:80', "mode": "shodan_search",
+        })
+        assert r.status_code == 200
+        sid = r.json()["id"]
+        final = _poll(client, sid, timeout_s=90)
+        assert final and final["status"] == "completed", f"shodan_search scan didn't complete: {final}"
+
+        full = client.get(f"{API}/scans/{sid}").json()
+        assert full["mode"] == "shodan_search"
+        result = full["result"]
+        assert result is not None
+
+        ss = result.get("shodan_search")
+        assert ss is not None, "shodan_search block missing"
+        assert ss.get("error") is None, f"shodan_search error: {ss.get('error')}"
+        # Apache-in-NL:port-80 should yield hundreds of hosts
+        assert ss.get("total", 0) > 100, f"expected >100 total, got {ss.get('total')}"
+        hits = ss.get("hits") or []
+        assert len(hits) > 0, "no hits returned"
+
+        h0 = hits[0]
+        assert h0.get("ip"), "first hit missing ip"
+        assert h0.get("port") == 80, f"expected port 80, got {h0.get('port')}"
+        # product name contains Apache (case-insensitive). Shodan sometimes returns "Apache httpd"
+        prod = (h0.get("product") or "").lower()
+        assert "apache" in prod, f"first hit product not apache-like: {h0.get('product')}"
+
+        # Keep for the HTML report test below
+        pytest.shodan_search_scan_id = sid
+
+    def test_shodan_search_html_report(self, client):
+        sid = getattr(pytest, "shodan_search_scan_id", None)
+        if not sid:
+            pytest.skip("shodan_search scan not created by prior test")
+        r = client.get(f"{API}/scans/{sid}/report")
+        assert r.status_code == 200
+        html = r.text
+        assert "Shodan Search" in html, "report missing 'Shodan Search' heading"
+        assert "apache" in html.lower(), "report missing query/product"
+        # cleanup
+        client.delete(f"{API}/scans/{sid}")
+
+
+# ── IP scan: cves field schema exists ───────────────────
+class TestCVEsFieldSchema:
+    def test_ip_scan_has_cves_field(self, client):
+        # 1.1.1.1 Cloudflare typically has no Shodan vulns — cves should be empty list
+        r = client.post(f"{API}/scans", json={"target": "1.1.1.1", "mode": "ip"})
+        assert r.status_code == 200
+        sid = r.json()["id"]
+        final = _poll(client, sid, timeout_s=120)
+        assert final and final["status"] == "completed", f"ip scan didn't complete: {final}"
+
+        full = client.get(f"{API}/scans/{sid}").json()
+        result = full["result"]
+        assert result is not None
+        # cves is always a list in schema (may be empty)
+        assert "cves" in result, "result.cves key missing (schema should always include it)"
+        assert isinstance(result["cves"], list), "result.cves should be a list"
+        client.delete(f"{API}/scans/{sid}")
+
+
+# ── Direct NVDAdapter enrichment (Log4Shell + Heartbleed) ─
+class TestNVDAdapterDirect:
+    def test_log4shell_and_heartbleed(self):
+        from osint.enrichment.nvd_adapter import NVDAdapter
+
+        async def _run():
+            nvd = NVDAdapter(db=None)  # no cache -> hits NVD live
+            return await nvd.enrich(["CVE-2021-44228", "CVE-2014-0160"])
+
+        details = asyncio.run(_run())
+        by_id = {d.cve_id: d for d in details}
+
+        # Log4Shell
+        assert "CVE-2021-44228" in by_id, f"Log4Shell missing, got: {list(by_id)}"
+        log4j = by_id["CVE-2021-44228"]
+        assert log4j.severity == "CRITICAL", f"Log4Shell severity={log4j.severity}"
+        assert log4j.cvss_score == 10.0, f"Log4Shell CVSS={log4j.cvss_score}"
+        assert log4j.nvd_url and "CVE-2021-44228" in log4j.nvd_url
+        assert log4j.description and len(log4j.description) > 0
+        assert log4j.published is not None
+
+        # Heartbleed
+        assert "CVE-2014-0160" in by_id, "Heartbleed missing"
+        hb = by_id["CVE-2014-0160"]
+        assert hb.severity == "HIGH", f"Heartbleed severity={hb.severity}"
+        # NVD reports CVSS v3.1 = 7.5 for Heartbleed
+        assert hb.cvss_score == 7.5, f"Heartbleed CVSS={hb.cvss_score}"
+
+
+# ── Scoring: CRITICAL CVE bumps risk_score by +15 per CVE (cap 30) ─
+class TestScoringCritCVE:
+    def test_critical_cve_adds_15_points(self):
+        from osint.models import ScanResult, CVEDetail
+        from osint.scoring import compute_risk
+
+        base = ScanResult(target="example.com")
+        baseline_score = compute_risk(base).risk_score
+
+        with_one_crit = ScanResult(
+            target="example.com",
+            cves=[CVEDetail(cve_id="CVE-2021-44228", cvss_score=10.0, severity="CRITICAL")],
+        )
+        s1 = compute_risk(with_one_crit).risk_score
+        assert s1 - baseline_score == 15, f"expected +15 for 1 CRITICAL, got +{s1 - baseline_score}"
+
+        with_three_crit = ScanResult(
+            target="example.com",
+            cves=[
+                CVEDetail(cve_id="CVE-1", cvss_score=10.0, severity="CRITICAL"),
+                CVEDetail(cve_id="CVE-2", cvss_score=9.5, severity="CRITICAL"),
+                CVEDetail(cve_id="CVE-3", cvss_score=9.1, severity="CRITICAL"),
+            ],
+        )
+        s3 = compute_risk(with_three_crit).risk_score
+        # cap at +30
+        assert s3 - baseline_score == 30, f"expected +30 cap for 3 CRITICAL, got +{s3 - baseline_score}"
+

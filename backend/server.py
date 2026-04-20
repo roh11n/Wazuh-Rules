@@ -88,7 +88,7 @@ async def _load_settings_overrides():
 # ── Background scan runner ──────────────────────────────
 async def _run_scan(scan_id: str, req: ScanRequest):
     await _load_settings_overrides()
-    orch = Orchestrator()
+    orch = Orchestrator(db=db)
 
     async def progress_cb(phase: str, pct: int, msg: str):
         await db.scans.update_one(
@@ -142,6 +142,10 @@ async def create_scan(body: ScanCreate):
     elif mode == "dork":
         if not target:
             raise HTTPException(400, "Target (or placeholder) required for dorking")
+    elif mode == "shodan_search":
+        if not raw:
+            raise HTTPException(400, "Shodan query required")
+        target = raw  # preserve case & spaces in query
     else:
         if not target or "." not in target:
             raise HTTPException(400, "Invalid target domain")

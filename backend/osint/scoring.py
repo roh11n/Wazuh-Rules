@@ -46,6 +46,21 @@ def compute_risk(result: ScanResult) -> RiskScore:
         score += 25
         reasons.append(f"{len(flagged_ips)} IP(s) flagged by reputation sources")
 
+    # CVE severity scoring
+    crit_cves = [c for c in result.cves if c.severity == "CRITICAL"]
+    high_cves = [c for c in result.cves if c.severity == "HIGH"]
+    if crit_cves:
+        add = min(30, 15 * len(crit_cves))
+        score += add
+        top = sorted(crit_cves, key=lambda c: -(c.cvss_score or 0))[:3]
+        reasons.append(
+            f"{len(crit_cves)} CRITICAL CVE(s): " + ", ".join(f"{c.cve_id}({c.cvss_score})" for c in top)
+        )
+    if high_cves:
+        add = min(15, 5 * len(high_cves))
+        score += add
+        reasons.append(f"{len(high_cves)} HIGH severity CVE(s)")
+
     sensitive_ports = {22, 23, 3389, 5900, 445, 1433, 3306, 5432, 6379, 27017, 9200}
     exposed = [s for s in result.services if s.port in sensitive_ports]
     if exposed:

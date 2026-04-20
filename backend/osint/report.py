@@ -118,6 +118,26 @@ th{background:#0f0f11;color:var(--cyan);font-weight:600;text-transform:uppercase
 </table>{% endif %}
 {% endif %}</div>{% endfor %}{% endif %}
 
+{% if cves %}<h2>Vulnerabilities (CVE / NVD)</h2>
+{% for c in cves|sort(attribute='cvss_score', reverse=true) %}<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem;">
+<a href="{{ c.nvd_url }}" style="font-family:monospace;color:var(--cyan);font-weight:600;">{{ c.cve_id }}</a>
+<div>
+{% if c.cvss_score %}<span class="meta">CVSS {{ c.cvss_score }}</span>{% endif %}
+{% if c.severity %}<span class="badge badge-{{ c.severity.lower() if c.severity != 'NONE' else 'low' }}">{{ c.severity }}</span>{% endif %}
+</div></div>
+{% if c.description %}<p style="font-size:.82rem;color:var(--muted);">{{ c.description }}</p>{% endif %}
+{% if c.vector %}<div class="meta" style="font-family:monospace;margin-top:.4rem;">{{ c.vector }}</div>{% endif %}
+</div>{% endfor %}{% endif %}
+
+{% if shodan_search %}<h2>Shodan Search: {{ shodan_search.query }}</h2>
+<p class="meta">{{ shodan_search.hits|length }} of {{ shodan_search.total }} results</p>
+<table><tr><th>IP:Port</th><th>Product</th><th>Org</th><th>CC</th><th>Hostnames</th></tr>
+{% for h in shodan_search.hits %}<tr><td>{{ h.ip }}{% if h.port %}:{{ h.port }}{% endif %}</td>
+<td>{{ h.product or '-' }} {{ h.version or '' }}</td><td>{{ h.org or '-' }}</td>
+<td>{{ h.country_code or '-' }}</td><td>{{ h.hostnames[:2]|join(', ') or '-' }}</td></tr>{% endfor %}
+</table>{% endif %}
+
 {% if directories %}<h2>Directory Enumeration</h2>
 {% for d in directories %}<div class="card"><h3>{{ d.host }}</h3>
 <table><tr><th>Path</th><th>Status</th><th>Type</th><th>Size</th></tr>
@@ -169,6 +189,10 @@ def render_html(result: ScanResult) -> str:
         tls_certs=result.tls_certs,
         ips=result.ips,
         services=result.services,
+        shodan=result.shodan,
+        shodan_search=result.shodan_search,
+        cves=result.cves,
+        directories=result.directories,
         passive_dns=result.passive_dns,
         tech_fingerprints=result.tech_fingerprints,
         screenshots=result.screenshots,

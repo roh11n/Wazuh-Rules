@@ -197,6 +197,44 @@ class ShodanHostInfo(BaseModel):
     services: list[ShodanService] = Field(default_factory=list)
 
 
+class CVEDetail(BaseModel):
+    cve_id: str
+    description: str | None = None
+    cvss_score: float | None = None
+    severity: str | None = None  # CRITICAL | HIGH | MEDIUM | LOW | NONE
+    vector: str | None = None
+    published: str | None = None
+    last_modified: str | None = None
+    references: list[str] = Field(default_factory=list)
+    nvd_url: str | None = None
+
+
+class ShodanSearchHit(BaseModel):
+    ip: str
+    port: int | None = None
+    transport: str = "tcp"
+    product: str | None = None
+    version: str | None = None
+    org: str | None = None
+    isp: str | None = None
+    asn: str | None = None
+    country_code: str | None = None
+    country_name: str | None = None
+    city: str | None = None
+    hostnames: list[str] = Field(default_factory=list)
+    domains: list[str] = Field(default_factory=list)
+    timestamp: str | None = None
+    banner: str | None = None
+    ssl_cert_issuer: str | None = None
+
+
+class ShodanSearchResult(BaseModel):
+    query: str
+    total: int = 0
+    hits: list[ShodanSearchHit] = Field(default_factory=list)
+    error: str | None = None
+
+
 class RiskScore(BaseModel):
     risk_score: int
     severity: str
@@ -222,4 +260,6 @@ class ScanResult(BaseModel):
     services: list[ServiceRecord] = Field(default_factory=list)
     directories: list[DirectoryEnumResult] = Field(default_factory=list)
     shodan: list[ShodanHostInfo] = Field(default_factory=list)
+    cves: list[CVEDetail] = Field(default_factory=list)
+    shodan_search: ShodanSearchResult | None = None
     risk: RiskScore | None = None

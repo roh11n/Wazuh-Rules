@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Target, Play, AlertCircle, Globe, Server, Network, Search as SearchIcon } from "lucide-react";
+import { Target, Play, AlertCircle, Globe, Server, Network, Search as SearchIcon, Database } from "lucide-react";
 import { createScan } from "../lib/api";
 import { Switch } from "../components/ui/switch";
 
 const MODES = [
   { id: "domain", label: "Domain", icon: Globe, placeholder: "example.com", desc: "Full recon: RDAP, DNS, subs, certs, tech, IPs, ports, dirs, dorking." },
   { id: "website", label: "Website", icon: Server, placeholder: "www.example.com", desc: "Single host: tech stack, cert, ports, dirs, network info." },
-  { id: "ip", label: "IP", icon: Network, placeholder: "8.8.8.8", desc: "IP ownership, reputation, Shodan ports, passive DNS, WHOIS." },
+  { id: "ip", label: "IP", icon: Network, placeholder: "8.8.8.8", desc: "IP ownership, reputation, Shodan ports + CVEs, passive DNS, WHOIS." },
   { id: "dork", label: "Dork", icon: SearchIcon, placeholder: "example.com", desc: "Google dorking only. Target can be a domain or keyword." },
+  { id: "shodan_search", label: "Shodan", icon: Database, placeholder: 'apache country:"US"', desc: "Search Shodan by service, product, cert, org, country, etc." },
 ];
 
 export default function Landing() {
@@ -28,6 +29,7 @@ export default function Landing() {
   const validate = (t) => {
     if (!t) return "Enter a target";
     if (mode === "ip" && !/^(?:\d{1,3}\.){3}\d{1,3}$/.test(t)) return "Enter a valid IPv4 (e.g. 8.8.8.8)";
+    if (mode === "shodan_search") return null;
     if ((mode === "domain" || mode === "website") && !t.includes(".")) return "Enter a valid domain";
     return null;
   };
@@ -80,7 +82,7 @@ export default function Landing() {
         </p>
 
         {/* Mode tabs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6" data-testid="mode-tabs">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6" data-testid="mode-tabs">
           {MODES.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -105,7 +107,10 @@ export default function Landing() {
               <div className="flex items-center gap-2">
                 <Target className="h-3.5 w-3.5 text-cyan" strokeWidth={1.5} />
                 <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {mode === "ip" ? "target_ip" : mode === "dork" ? "target_or_keyword" : "target_" + mode}
+                  {mode === "ip" ? "target_ip" :
+                   mode === "dork" ? "target_or_keyword" :
+                   mode === "shodan_search" ? "shodan_query" :
+                   "target_" + mode}
                 </span>
               </div>
               <span className="font-mono text-[10px] text-cyan/70">{current.desc}</span>
@@ -142,7 +147,7 @@ export default function Landing() {
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {mode !== "dork" && mode !== "ip" && (
+            {mode !== "dork" && mode !== "ip" && mode !== "shodan_search" && (
               <label className="border border-border bg-card px-3 py-2 flex items-center justify-between gap-2 cursor-pointer" data-testid="toggle-skip-ss">
                 <span className="font-mono text-[10px] uppercase tracking-widest">Skip SS</span>
                 <Switch checked={skipSs} onCheckedChange={setSkipSs} />
@@ -154,7 +159,7 @@ export default function Landing() {
                 <Switch checked={skipDork} onCheckedChange={setSkipDork} />
               </label>
             )}
-            {mode !== "dork" && (
+            {mode !== "dork" && mode !== "shodan_search" && (
               <label className="border border-border bg-card px-3 py-2 flex items-center justify-between gap-2 cursor-pointer" data-testid="toggle-skip-ports">
                 <span className="font-mono text-[10px] uppercase tracking-widest">Skip Ports</span>
                 <Switch checked={skipPorts} onCheckedChange={setSkipPorts} />
@@ -167,6 +172,19 @@ export default function Landing() {
               </label>
             )}
           </div>
+
+          {mode === "shodan_search" && (
+            <div className="border border-cyan/20 bg-cyan/5 px-4 py-3 text-xs font-mono text-cyan/80">
+              <div className="mb-2 text-[10px] uppercase tracking-widest text-cyan">Shodan query examples</div>
+              <div className="space-y-1 text-muted-foreground">
+                <div>• <span className="text-foreground">apache country:"US"</span> — Apache servers in US</div>
+                <div>• <span className="text-foreground">port:22 product:"OpenSSH"</span> — SSH servers</div>
+                <div>• <span className="text-foreground">ssl.cert.issuer.CN:"Let's Encrypt"</span> — LE certs</div>
+                <div>• <span className="text-foreground">org:"Google"</span> — Hosts at a given org</div>
+                <div>• <span className="text-foreground">vuln:CVE-2021-44228</span> — Log4Shell</div>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-start gap-3 text-xs text-muted-foreground font-mono border border-yellow-500/20 bg-yellow-500/5 px-4 py-3">
             <AlertCircle className="h-4 w-4 text-yellow-500 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
