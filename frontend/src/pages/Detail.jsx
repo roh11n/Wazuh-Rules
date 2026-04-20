@@ -189,6 +189,70 @@ export default function Detail() {
 
       {isDone && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {r.shodan_search && (
+            <div className="lg:col-span-2">
+              <Section icon={Database} title={`Shodan Search Results (${r.shodan_search.hits?.length || 0} of ${r.shodan_search.total || 0})`} testId="sec-shodan-search">
+                {r.shodan_search.error && (
+                  <div className="text-xs text-risk-critical font-mono mb-3 border-l-2 border-risk-critical pl-3">
+                    {r.shodan_search.error}
+                  </div>
+                )}
+                <div className="mb-3 font-mono text-xs text-cyan border-l-2 border-cyan pl-3 break-all">{r.shodan_search.query}</div>
+                <Table
+                  cols={[
+                    {k:"ip",label:"IP:Port", render:(x)=><span className="text-cyan">{x.ip}{x.port ? `:${x.port}` : ""}</span>},
+                    {k:"product",label:"Product", render:(x)=>[x.product, x.version].filter(Boolean).join(" ") || "—"},
+                    {k:"org",label:"Org"},
+                    {k:"country_code",label:"CC"},
+                    {k:"hostnames",label:"Hostnames", render:(x)=><span className="block truncate max-w-[220px]">{x.hostnames?.slice(0,2).join(", ") || "—"}</span>},
+                    {k:"banner",label:"Banner", render:(x)=><span className="block truncate max-w-[280px] text-muted-foreground">{x.banner || "—"}</span>},
+                  ]}
+                  rows={r.shodan_search.hits || []}
+                />
+              </Section>
+            </div>
+          )}
+
+          {r.cves?.length > 0 && (
+            <div className="lg:col-span-2">
+              <Section icon={AlertTriangle} title="Vulnerabilities (CVE / NVD)" count={r.cves.length} testId="sec-cves">
+                <div className="space-y-3">
+                  {r.cves
+                    .slice()
+                    .sort((a, b) => (b.cvss_score || 0) - (a.cvss_score || 0))
+                    .map((c, i) => (
+                    <div key={i} className="border border-border bg-background p-3" data-testid={`cve-${c.cve_id}`}>
+                      <div className="flex items-start justify-between gap-3 mb-2 flex-wrap">
+                        <a href={c.nvd_url} target="_blank" rel="noreferrer" className="font-mono text-sm text-cyan hover:underline flex items-center gap-1" data-testid={`cve-link-${c.cve_id}`}>
+                          {c.cve_id} <ExternalLink className="h-3 w-3" />
+                        </a>
+                        <div className="flex items-center gap-2">
+                          {c.cvss_score != null && (
+                            <span className="font-mono text-xs text-muted-foreground">CVSS {c.cvss_score}</span>
+                          )}
+                          {c.severity && (
+                            <span className={`inline-block font-mono text-[10px] px-2 py-0.5 border uppercase tracking-widest ${SEV_CLS[c.severity] || ""}`}>
+                              {c.severity}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {c.description && (
+                        <p className="text-xs text-muted-foreground font-sans leading-relaxed">{c.description}</p>
+                      )}
+                      {c.vector && (
+                        <div className="mt-2 font-mono text-[10px] text-muted-foreground break-all">{c.vector}</div>
+                      )}
+                      {c.published && (
+                        <div className="mt-1 font-mono text-[10px] text-muted-foreground">Published {c.published.slice(0, 10)}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            </div>
+          )}
+
           {r.domain && (
             <Section icon={Globe} title="Domain Intelligence" testId="sec-domain">
               <KV k="registrar" v={r.domain.registrar} />

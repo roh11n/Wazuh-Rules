@@ -1,0 +1,54 @@
+{
+  "summary": "Retested Detail.jsx after sec-shodan-search and sec-cves blocks were added. All 4 requested frontend checks PASS. Created live shodan_search scan 'port:22 product:OpenSSH country:US' (returned total=5,166,972, 50 hits) and injected a synthetic MongoDB doc for CVE rendering. Detail page renders both sections correctly with proper sort, severity colors, hrefs, and ScanProgress phase pills for SEARCH/CVE show green completed state.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Detail page (shodan_search mode)", "issues": ["Empty sections (Subdomains, Live Hosts, TLS Certs, IP Intelligence, Tech Fingerprints, Open Ports, Passive DNS, Screenshots, Google Dorking) still render with 'No data' even though they are irrelevant for shodan_search mode. Creates visual noise below the meaningful Shodan Search Results table. Consider gating these sections by scan.mode !== 'shodan_search' or by truthy data.", "Risk assessment card shows '0/100 LOW' for shodan_search mode — may confuse users since risk scoring is not meaningful for a generic search. Consider hiding risk card when scan.mode === 'shodan_search'."]}
+    ]
+  },
+  "test_verification_details": {
+    "sec_shodan_search": {
+      "visible": true,
+      "section_title": "Shodan Search Results (50 of 5166972)",
+      "query_text_shown": "port:22 product:OpenSSH country:US",
+      "columns": ["IP:Port", "Product", "Org", "CC", "Hostnames", "Banner"],
+      "row_count": 50,
+      "first_row_sample": ["91.189.91.48:22", "OpenSSH 7.6p1 Ubuntu ...", "Canonical Group Limited", "US", "amyrose.canonical.com", "SSH-2.0-OpenSSH_7.6p1 Ubuntu-4ubuntu0.7+esm4"]
+    },
+    "sec_cves": {
+      "visible_when_cves_populated": true,
+      "sorted_by_cvss_desc": true,
+      "order_observed": ["CVE-2021-44228 (10.0 CRITICAL)", "CVE-2014-0160 (7.5 HIGH)", "CVE-2020-1234 (5.5 MEDIUM)"],
+      "cve_link_CVE-2021-44228_href": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
+      "severity_badges": {
+        "CRITICAL": "border-risk-critical text-risk-critical (red)",
+        "HIGH": "border-risk-high text-risk-high (orange)",
+        "MEDIUM": "border-risk-medium text-risk-medium (yellow)"
+      }
+    },
+    "scan_progress_pills": {
+      "phase-shodan_search": "shows '09 Search ✓' with border-risk-low (green completed)",
+      "phase-nvd": "shows '15 CVE ✓' with border-risk-low (green completed)"
+    }
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "(Optional UX polish) Hide unrelated empty sections in Detail.jsx when scan.mode === 'shodan_search' — currently 9 'No data' panels render below the useful shodan_search table.",
+    "(Optional UX polish) Hide the Risk Assessment card for shodan_search mode (shows 0/100 LOW which is not meaningful for a query-level search)."
+  ],
+  "critical_code_review_comments": [
+    "Detail.jsx fix is clean: sec-shodan-search and sec-cves blocks correctly gated on truthy data (r.shodan_search / r.cves?.length > 0). SEV_CLS mapping correctly uses border-risk-{severity} Tailwind classes.",
+    "CVE sort uses .slice().sort(...) which preserves immutability — good practice.",
+    "data-testid='cve-link-CVE-XXX' correctly placed on <a> tag with nvd_url href; accessibility ok (target=_blank rel=noreferrer)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (21/21, unchanged)", "frontend": "100% on all 4 requested Detail.jsx checks"},
+  "test_credentials": "No auth. Shodan key in /app/backend/.env live and working.",
+  "seed_data_creation": "Injected MongoDB doc id='test-cve-1' with 3 CVEs (Log4Shell/Heartbleed/synthetic MEDIUM) — cleaned up after test. Created live shodan_search scan for 'port:22 product:OpenSSH country:US' — cleaned up after test.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Detail page now fully renders shodan_search + CVE sections. The only remaining observations are UX polish (hiding empty sections in shodan_search mode and the 0/100 risk card). No functional bugs. Backend 21/21 from iteration_3 still holds.",
+  "rca_of_the_issue": "Issue from iteration_3 (missing sec-shodan-search and sec-cves) is FIXED. Main agent added both Section blocks in Detail.jsx lines 190-254 with correct conditional rendering, sort, severity badge color mapping via SEV_CLS constant, and NVD hyperlinks."
+}
