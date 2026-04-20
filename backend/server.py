@@ -35,14 +35,18 @@ api = APIRouter(prefix="/api")
 # ── Models ──────────────────────────────────────────────
 class ScanCreate(BaseModel):
     target: str
+    mode: str = "domain"  # domain | website | ip | dork
     dork_queries: list[str] = Field(default_factory=list)
     skip_screenshots: bool = False
     skip_dorking: bool = False
+    skip_directories: bool = False
+    skip_ports: bool = False
 
 
 class ScanStatus(BaseModel):
     id: str
     target: str
+    mode: str = "domain"
     status: str  # queued | running | completed | failed
     phase: str | None = None
     progress: int = 0
@@ -59,6 +63,7 @@ class SettingsIn(BaseModel):
     abuseipdb_key: str | None = None
     virustotal_key: str | None = None
     otx_key: str | None = None
+    shodan_key: str | None = None
     discord_webhook: str | None = None
 
 
@@ -75,6 +80,7 @@ async def _load_settings_overrides():
             "ABUSEIPDB_KEY": doc.get("abuseipdb_key"),
             "VIRUSTOTAL_KEY": doc.get("virustotal_key"),
             "OTX_KEY": doc.get("otx_key"),
+            "SHODAN_KEY": doc.get("shodan_key"),
             "DISCORD_WEBHOOK": doc.get("discord_webhook"),
         })
 
@@ -125,14 +131,26 @@ async def root():
 
 @api.post("/scans", response_model=ScanStatus)
 async def create_scan(body: ScanCreate):
-    target = body.target.strip().lower().replace("https://", "").replace("http://", "").strip("/")
-    if not target or "." not in target:
-        raise HTTPException(400, "Invalid target domain")
+    raw = body.target.strip()
+    mode = (body.mode or "domain").lower()
+    target = raw.lower().replace("https://", "").replace("http://", "").strip("/")
+
+    if mode == "ip":
+        import re
+        if not re.match(r"^(?:\d{1,3}\.){3}\d{1,3}$", target):
+            raise HTTPException(400, "Invalid IP address")
+    elif mode == "dork":
+        if not target:
+            raise HTTPException(400, "Target (or placeholder) required for dorking")
+    else:
+        if not target or "." not in target:
+            raise HTTPException(400, "Invalid target domain")
 
     scan_id = str(uuid.uuid4())
     doc = {
         "id": scan_id,
         "target": target,
+        "mode": mode,
         "status": "queued",
         "phase": None,
         "progress": 0,
@@ -146,14 +164,19 @@ async def create_scan(body: ScanCreate):
         "dork_queries": body.dork_queries,
         "skip_screenshots": body.skip_screenshots,
         "skip_dorking": body.skip_dorking,
+        "skip_directories": body.skip_directories,
+        "skip_ports": body.skip_ports,
     }
     await db.scans.insert_one(doc)
 
     req = ScanRequest(
         target=target,
+        mode=mode,
         dork_queries=body.dork_queries,
         skip_screenshots=body.skip_screenshots,
         skip_dorking=body.skip_dorking,
+        skip_directories=body.skip_directories,
+        skip_ports=body.skip_ports,
     )
     asyncio.create_task(_run_scan(scan_id, req))
 
@@ -164,7 +187,8 @@ async def create_scan(body: ScanCreate):
 async def list_scans():
     cur = db.scans.find(
         {},
-        {"_id": 0, "result": 0, "dork_queries": 0, "skip_screenshots": 0, "skip_dorking": 0},
+        {"_id": 0, "result": 0, "dork_queries": 0, "skip_screenshots": 0,
+         "skip_dorking": 0, "skip_directories": 0, "skip_ports": 0},
     ).sort("created_at", -1).limit(200)
     return [ScanStatus(**doc) async for doc in cur]
 
@@ -181,7 +205,8 @@ async def get_scan(scan_id: str):
 async def get_status(scan_id: str):
     doc = await db.scans.find_one(
         {"id": scan_id},
-        {"_id": 0, "result": 0, "dork_queries": 0, "skip_screenshots": 0, "skip_dorking": 0},
+        {"_id": 0, "result": 0, "dork_queries": 0, "skip_screenshots": 0,
+         "skip_dorking": 0, "skip_directories": 0, "skip_ports": 0},
     )
     if not doc:
         raise HTTPException(404, "Scan not found")
@@ -216,7 +241,7 @@ async def get_settings():
         doc = {}
     # return masked (just indicate present/absent)
     out = {}
-    for k in ("ipinfo_token", "abuseipdb_key", "virustotal_key", "otx_key", "discord_webhook"):
+    for k in ("ipinfo_token", "abuseipdb_key", "virustotal_key", "otx_key", "shodan_key", "discord_webhook"):
         v = doc.get(k) or ""
         out[k] = ("•" * 8 + v[-4:]) if v and len(v) > 4 else ""
         out[f"{k}_set"] = bool(v)

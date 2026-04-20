@@ -64,7 +64,8 @@ export default function History() {
 
       <div className="border border-border bg-card" data-testid="scans-table">
         <div className="grid grid-cols-12 px-4 py-2 border-b border-border font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          <div className="col-span-4">Target</div>
+          <div className="col-span-1">Mode</div>
+          <div className="col-span-3">Target</div>
           <div className="col-span-2">Status</div>
           <div className="col-span-2">Severity</div>
           <div className="col-span-2">Created</div>
@@ -88,7 +89,12 @@ export default function History() {
               data-testid={`scan-row-${s.id}`}
               className="grid grid-cols-12 px-4 py-3 border-b border-border last:border-b-0 items-center hover:bg-secondary/30 transition-colors"
             >
-              <div className="col-span-4 font-mono text-sm text-foreground truncate">{s.target}</div>
+              <div className="col-span-1">
+                <span className="inline-block font-mono text-[10px] px-2 py-0.5 border border-cyan/40 text-cyan uppercase tracking-widest">
+                  {s.mode || "domain"}
+                </span>
+              </div>
+              <div className="col-span-3 font-mono text-sm text-foreground truncate">{s.target}</div>
               <div className="col-span-2">{statusPill(s.status)}</div>
               <div className="col-span-2">
                 {s.severity ? <SeverityBadge severity={s.severity} score={s.risk_score} /> : <span className="text-muted-foreground font-mono text-xs">—</span>}

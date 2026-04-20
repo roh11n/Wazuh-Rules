@@ -57,6 +57,10 @@ class Settings:
         return _get("OTX_KEY")
 
     @property
+    def shodan_key(self) -> str | None:
+        return _get("SHODAN_KEY")
+
+    @property
     def discord_webhook(self) -> str | None:
         return _get("DISCORD_WEBHOOK")
 

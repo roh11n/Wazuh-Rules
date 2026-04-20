@@ -8,6 +8,7 @@ const FIELDS = [
   { k: "abuseipdb_key", label: "AbuseIPDB Key", url: "https://www.abuseipdb.com/account/api" },
   { k: "virustotal_key", label: "VirusTotal Key", url: "https://www.virustotal.com/gui/my-apikey" },
   { k: "otx_key", label: "OTX Key", url: "https://otx.alienvault.com/api" },
+  { k: "shodan_key", label: "Shodan API Key", url: "https://account.shodan.io/" },
   { k: "discord_webhook", label: "Discord Webhook", url: "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks" },
 ];
 

@@ -94,6 +94,36 @@ th{background:#0f0f11;color:var(--cyan);font-weight:600;text-transform:uppercase
 {% for s in services %}<tr><td>{{ s.host }}</td><td>{{ s.port }}</td><td>{{ s.service or '-' }}</td><td>{{ s.banner or '-' }}</td></tr>{% endfor %}
 </table>{% endif %}
 
+{% if shodan %}<h2>Shodan Intelligence</h2>
+{% for h in shodan %}<div class="card"><h3>{{ h.ip }}</h3>
+{% if not h.found %}<p class="meta">Not indexed by Shodan.</p>
+{% else %}<div class="grid2">
+<div>
+<div class="kv"><span class="k">Country</span><span class="v">{{ h.country_name or '-' }}</span></div>
+<div class="kv"><span class="k">City</span><span class="v">{{ h.city or '-' }}</span></div>
+<div class="kv"><span class="k">Org</span><span class="v">{{ h.org or '-' }}</span></div>
+<div class="kv"><span class="k">ISP</span><span class="v">{{ h.isp or '-' }}</span></div>
+<div class="kv"><span class="k">ASN</span><span class="v">{{ h.asn or '-' }}</span></div>
+</div><div>
+<div class="kv"><span class="k">OS</span><span class="v">{{ h.os or '-' }}</span></div>
+<div class="kv"><span class="k">Last Update</span><span class="v">{{ h.last_update or '-' }}</span></div>
+<div class="kv"><span class="k">Open Ports</span><span class="v">{{ h.ports|join(', ') or '-' }}</span></div>
+<div class="kv"><span class="k">Hostnames</span><span class="v">{{ h.hostnames|join(', ') or '-' }}</span></div>
+</div></div>
+{% if h.vulns %}<h3 style="color:var(--red);">Vulnerabilities ({{ h.vulns|length }})</h3>
+<p style="font-family:monospace;font-size:.78rem;color:var(--red);">{{ h.vulns|join(', ') }}</p>{% endif %}
+{% if h.services %}<h3>Services</h3>
+<table><tr><th>Port</th><th>Product</th><th>Version</th><th>Banner</th></tr>
+{% for s in h.services %}<tr><td>{{ s.port }}</td><td>{{ s.product or '-' }}</td><td>{{ s.version or '-' }}</td><td>{{ (s.banner or '-')[:100] }}</td></tr>{% endfor %}
+</table>{% endif %}
+{% endif %}</div>{% endfor %}{% endif %}
+
+{% if directories %}<h2>Directory Enumeration</h2>
+{% for d in directories %}<div class="card"><h3>{{ d.host }}</h3>
+<table><tr><th>Path</th><th>Status</th><th>Type</th><th>Size</th></tr>
+{% for e in d.entries %}<tr><td>{{ e.path }}</td><td>{{ e.status_code }}</td><td>{{ e.content_type or '-' }}</td><td>{{ e.content_length }}</td></tr>{% endfor %}
+</table></div>{% endfor %}{% endif %}
+
 {% if tech_fingerprints %}<h2>Technology Fingerprints</h2>
 {% for t in tech_fingerprints %}<div class="card"><h3>{{ t.host }}</h3><div class="grid2">
 <div><div class="kv"><span class="k">Server</span><span class="v">{{ t.server or '-' }}</span></div>

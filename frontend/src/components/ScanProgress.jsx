@@ -5,9 +5,12 @@ const PHASES = [
   { key: "http_probe",   label: "HTTP" },
   { key: "tls_tech_ss",  label: "TLS+Tech" },
   { key: "ip_enrich",    label: "IP Intel" },
+  { key: "ip_whois",     label: "IP WHOIS" },
+  { key: "shodan",       label: "Shodan" },
   { key: "port_scan",    label: "Ports" },
+  { key: "directories",  label: "Dirs" },
   { key: "passive_dns",  label: "pDNS" },
-  { key: "reputation",   label: "Reputation" },
+  { key: "reputation",   label: "VT" },
   { key: "dorking",      label: "Dorking" },
   { key: "risk",         label: "Risk" },
 ];
@@ -39,7 +42,7 @@ export default function ScanProgress({ status }) {
         {!done && !failed && <div className="absolute inset-0 scan-line" />}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-7 gap-2">
         {PHASES.map((p, i) => {
           const active = ORDER.indexOf(status?.phase) === i && !done;
           const complete = i < idx || done;

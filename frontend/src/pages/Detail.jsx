@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowLeft, FileText, Download, Globe, Server, Lock, Shield, Network, Camera, Search as SearchIcon, Cpu, Radar } from "lucide-react";
+import { ArrowLeft, FileText, Download, Globe, Server, Lock, Shield, Network, Camera, Search as SearchIcon, Cpu, Radar, FolderOpen, Zap } from "lucide-react";
 import { getScan, reportUrl } from "../lib/api";
 import ScanProgress from "../components/ScanProgress";
 import SeverityBadge from "../components/SeverityBadge";
@@ -20,6 +20,40 @@ const Section = ({ icon: Icon, title, count, children, testId }) => (
     <div className="p-4">{children}</div>
   </section>
 );
+
+// Explain common RDAP status codes
+const STATUS_EXPLAIN = {
+  "clienttransferprohibited": "Registrar blocks transfers to another registrar (good lock).",
+  "clientupdateprohibited": "Registrar blocks updates to domain info (good lock).",
+  "clientdeleteprohibited": "Registrar blocks domain deletion (good lock).",
+  "servertransferprohibited": "Registry blocks transfers (stronger lock).",
+  "serverupdateprohibited": "Registry blocks updates.",
+  "serverdeleteprohibited": "Registry blocks deletion.",
+  "clienthold": "⚠ Registrar has put domain on hold — may not resolve.",
+  "serverhold": "⚠ Registry hold — domain disabled in DNS.",
+  "pendingdelete": "⚠ Domain in pending delete state.",
+  "pendingtransfer": "Transfer in progress.",
+  "ok": "Normal operational state.",
+  "active": "Normal operational state.",
+};
+
+function StatusPill({ status }) {
+  const key = status.toLowerCase().replace(/\s+/g, "");
+  const bad = ["clienthold", "serverhold", "pendingdelete"].some(b => key.includes(b));
+  const good = key.includes("prohibited");
+  return (
+    <span
+      title={STATUS_EXPLAIN[key] || status}
+      className={`inline-block font-mono text-[10px] px-2 py-0.5 mr-1 mb-1 border ${
+        bad ? "border-risk-critical text-risk-critical" :
+        good ? "border-risk-low/60 text-risk-low" :
+        "border-border text-muted-foreground"
+      }`}
+    >
+      {status}
+    </span>
+  );
+}
 
 const KV = ({ k, v, mono = true }) => (
   <div className="flex gap-3 py-1 text-sm">
@@ -155,7 +189,14 @@ export default function Detail() {
               <KV k="expires" v={r.domain.expiry_date} />
               <KV k="dnssec" v={r.domain.dnssec ? "ENABLED" : "DISABLED"} />
               <KV k="abuse_email" v={r.domain.abuse_email} />
-              <KV k="statuses" v={r.domain.statuses?.join(", ")} />
+              {r.domain.statuses?.length > 0 && (
+                <div className="pt-2 mt-2 border-t border-border">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">rdap_statuses</div>
+                  <div className="flex flex-wrap">
+                    {r.domain.statuses.map((s, i) => <StatusPill key={i} status={s} />)}
+                  </div>
+                </div>
+              )}
             </Section>
           )}
 
@@ -241,6 +282,81 @@ export default function Detail() {
               rows={r.services || []}
             />
           </Section>
+
+          {r.shodan?.length > 0 && (
+            <Section icon={Zap} title="Shodan Intel" count={r.shodan.length} testId="sec-shodan">
+              {r.shodan.map((h, i) => (
+                <div key={i} className="mb-4 pb-4 border-b border-border last:border-0 last:mb-0 last:pb-0">
+                  <div className="font-mono text-sm text-cyan mb-2">{h.ip}</div>
+                  {!h.found ? (
+                    <p className="text-xs text-muted-foreground font-mono">Not indexed by Shodan.</p>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                          <KV k="country" v={h.country_name} />
+                          <KV k="city" v={h.city} />
+                          <KV k="org" v={h.org} />
+                          <KV k="isp" v={h.isp} />
+                          <KV k="asn" v={h.asn} />
+                        </div>
+                        <div>
+                          <KV k="os" v={h.os} />
+                          <KV k="last_update" v={h.last_update} />
+                          <KV k="ports" v={h.ports?.join(", ")} />
+                          <KV k="tags" v={h.tags?.join(", ")} />
+                          <KV k="hostnames" v={h.hostnames?.slice(0,5).join(", ")} />
+                        </div>
+                      </div>
+                      {h.vulns?.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <div className="font-mono text-[10px] uppercase tracking-widest text-risk-critical mb-2">vulnerabilities ({h.vulns.length})</div>
+                          <div className="flex flex-wrap gap-1">
+                            {h.vulns.slice(0, 20).map((v, j) => (
+                              <span key={j} className="font-mono text-[10px] px-2 py-0.5 border border-risk-critical/50 text-risk-critical">{v}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {h.services?.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">services ({h.services.length})</div>
+                          <Table
+                            cols={[
+                              {k:"port",label:"Port"},
+                              {k:"product",label:"Product"},
+                              {k:"version",label:"Ver"},
+                              {k:"banner",label:"Banner", render:(x)=><span className="block truncate max-w-[300px] text-muted-foreground">{x.banner || "—"}</span>},
+                            ]}
+                            rows={h.services}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+            </Section>
+          )}
+
+          {r.directories?.length > 0 && (
+            <Section icon={FolderOpen} title="Directory Enumeration" count={r.directories.reduce((a,d)=>a+d.entries.length,0)} testId="sec-dirs">
+              {r.directories.map((d, i) => (
+                <div key={i} className="mb-4 last:mb-0">
+                  <div className="font-mono text-sm text-cyan mb-2">{d.host}</div>
+                  <Table
+                    cols={[
+                      {k:"path",label:"Path"},
+                      {k:"status_code",label:"Status", render:(x)=><span className={`${x.status_code < 300 ? "text-risk-low" : x.status_code < 400 ? "text-yellow-500" : x.status_code === 403 ? "text-risk-high" : "text-muted-foreground"}`}>{x.status_code}</span>},
+                      {k:"content_type",label:"Type"},
+                      {k:"content_length",label:"Size"},
+                    ]}
+                    rows={d.entries}
+                  />
+                </div>
+              ))}
+            </Section>
+          )}
 
           <Section icon={Shield} title="Passive DNS" count={r.passive_dns?.length} testId="sec-pdns">
             <Table

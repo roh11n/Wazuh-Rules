@@ -6,9 +6,12 @@ from datetime import datetime, timezone
 
 class ScanRequest(BaseModel):
     target: str
+    mode: str = "domain"  # domain | website | ip | dork
     dork_queries: list[str] = Field(default_factory=list)
     skip_screenshots: bool = False
     skip_dorking: bool = False
+    skip_directories: bool = False
+    skip_ports: bool = False
 
 
 class DomainInfo(BaseModel):
@@ -150,6 +153,50 @@ class ServiceRecord(BaseModel):
     authorized_scan: bool = False
 
 
+class DirectoryEntry(BaseModel):
+    path: str
+    url: str
+    status_code: int
+    content_length: int = 0
+    content_type: str | None = None
+    title: str | None = None
+
+
+class DirectoryEnumResult(BaseModel):
+    host: str
+    base_url: str
+    entries: list[DirectoryEntry] = Field(default_factory=list)
+
+
+class ShodanService(BaseModel):
+    port: int
+    transport: str = "tcp"
+    product: str | None = None
+    version: str | None = None
+    banner: str | None = None
+    ssl_cert_issuer: str | None = None
+    hostnames: list[str] = Field(default_factory=list)
+    cpe: list[str] = Field(default_factory=list)
+
+
+class ShodanHostInfo(BaseModel):
+    ip: str
+    found: bool = False
+    country_name: str | None = None
+    city: str | None = None
+    org: str | None = None
+    isp: str | None = None
+    asn: str | None = None
+    os: str | None = None
+    hostnames: list[str] = Field(default_factory=list)
+    domains: list[str] = Field(default_factory=list)
+    ports: list[int] = Field(default_factory=list)
+    vulns: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
+    last_update: str | None = None
+    services: list[ShodanService] = Field(default_factory=list)
+
+
 class RiskScore(BaseModel):
     risk_score: int
     severity: str
@@ -173,4 +220,6 @@ class ScanResult(BaseModel):
     screenshots: list[ScreenshotRecord] = Field(default_factory=list)
     dorking: list[DorkResult] = Field(default_factory=list)
     services: list[ServiceRecord] = Field(default_factory=list)
+    directories: list[DirectoryEnumResult] = Field(default_factory=list)
+    shodan: list[ShodanHostInfo] = Field(default_factory=list)
     risk: RiskScore | None = None
