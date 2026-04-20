@@ -1,0 +1,33 @@
+{
+  "summary": "End-to-end test of OSINT Pipeline backend + frontend. 11/11 backend pytest cases passed (health, settings CRUD with masking, scan validation, scan list, scan creation + E2E with example.com). Full frontend flow verified via Playwright: Landing form, empty-submit toast, toggles (skip-ss/skip-dork), navigation to Detail, 11-phase ScanProgress, polling to 100%, risk score (0/100 LOW), Domain/DNS/Subs/Live Hosts/TLS/IPs/Ports/Tech/pDNS sections rendered, Download HTML Report button appears, History table lists scans, row click navigates, Settings save shows 'API keys saved' toast.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py uses @app.on_event('startup'/'shutdown') which is deprecated in FastAPI; recommend migrating to lifespan context manager.",
+    "In _run_scan, settings overrides are loaded once at scan start; good. But set_overrides state is process-global and can leak across concurrent scans if users change keys mid-scan — acceptable for MVP but worth noting.",
+    "GET /api/scans/{id} returns the raw mongo doc (with _id excluded) but no Pydantic response_model validation — schema drift risk; consider adding ScanDetail model.",
+    "asyncio.create_task result is not tracked; if event loop is restarted (e.g., during worker restart) an in-flight scan will be silently lost. Consider a task registry or persistent job queue for production.",
+    "Settings GET masks values with last-4 chars + bullets; this is fine but `_set` flags are redundant once a non-empty masked string is present — minor."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py"
+  ],
+  "success_rate": {"backend": "100% (11/11)", "frontend": "100%"},
+  "test_credentials": "None (no auth required by this app)",
+  "seed_data_creation": "Tests create/delete their own scans for example.com; a masked ipinfo_token test value was stored via PUT /api/settings (last-4 'cdef' retained masked).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend is stable. E2E scan for example.com with skip_dorking+skip_screenshots completes in ~10-20s. Use the same flags in any future tests to keep runtime low. Frontend data-testids exist on all key elements (scan-input, start-scan-button, toggle-skip-ss, toggle-skip-dork, scan-progress, progress-pct, target-heading, risk-score, download-report-btn, scans-table, scan-row-{id}, settings-page, input-{key}, save-settings-btn). No mocked APIs. Google dorking may return empty due to anti-bot — expected."
+}
